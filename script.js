@@ -15,3 +15,24 @@ const observer = new IntersectionObserver((entries) => {
     });
 }, { threshold: 0.1 });
 reveals.forEach(el => observer.observe(el));
+
+// ── Mobile hamburger menu ──
+const hamburger = document.getElementById('navHamburger');
+const drawer = document.getElementById('navDrawer');
+const drawerClose = document.getElementById('navDrawerClose');
+const overlay = document.getElementById('navOverlay');
+
+function openDrawer() {
+    drawer.classList.add('open');
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+function closeDrawer() {
+    drawer.classList.remove('open');
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+if (hamburger) hamburger.addEventListener('click', openDrawer);
+if (drawerClose) drawerClose.addEventListener('click', closeDrawer);
+if (overlay) overlay.addEventListener('click', closeDrawer);
