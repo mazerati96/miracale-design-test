@@ -1,9 +1,3 @@
-<?php
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -60,14 +54,11 @@ error_reporting(E_ALL);
 
     /* ── TAB SWITCHER ── */
     .tab-bar {
-      display: flex;
-      justify-content: center;
-      gap: 0;
-      margin: 0 auto 4rem;
+      display: flex; justify-content: center;
+      gap: 0; margin: 0 auto 4rem;
       max-width: 360px;
       background: var(--parchment);
-      border-radius: 99px;
-      padding: 5px;
+      border-radius: 99px; padding: 5px;
     }
     .tab-btn {
       flex: 1; padding: 0.65rem 1.5rem;
@@ -85,21 +76,17 @@ error_reporting(E_ALL);
 
     /* ── SHARED LAYOUT ── */
     .blog-section,
-    .events-section {
-      padding: 0 3rem 6rem;
-    }
+    .events-section { padding: 0 3rem 6rem; }
     .events-section { display: none; }
 
-    /* ── BLOG: FEATURED POST ── */
+    /* ── FEATURED POST ── */
     .featured-post {
       display: grid;
       grid-template-columns: 1.1fr 1fr;
-      gap: 3rem;
-      align-items: center;
+      gap: 3rem; align-items: center;
       background: var(--white);
       border: 1px solid rgba(28,26,23,0.07);
-      border-radius: 24px;
-      overflow: hidden;
+      border-radius: 24px; overflow: hidden;
       margin-bottom: 3rem;
       box-shadow: 0 8px 40px rgba(28,26,23,0.07);
       transition: box-shadow 0.3s;
@@ -109,8 +96,7 @@ error_reporting(E_ALL);
       aspect-ratio: 4/3;
       background: linear-gradient(135deg, var(--parchment), #e8d5b5);
       display: flex; align-items: center; justify-content: center;
-      flex-direction: column; gap: 0.6rem;
-      overflow: hidden;
+      flex-direction: column; gap: 0.6rem; overflow: hidden;
     }
     .featured-img img {
       width: 100%; height: 100%; object-fit: cover;
@@ -124,23 +110,20 @@ error_reporting(E_ALL);
       font-size: 0.68rem; font-weight: 700;
       letter-spacing: 0.14em; text-transform: uppercase;
       color: var(--white); background: var(--terra);
-      padding: 0.22rem 0.65rem; border-radius: 6px;
-      margin-bottom: 0.9rem;
+      padding: 0.22rem 0.65rem; border-radius: 6px; margin-bottom: 0.9rem;
     }
     .featured-title {
       font-family: 'Cormorant Garamond', serif;
       font-size: clamp(1.6rem, 2.5vw, 2.4rem);
-      font-weight: 400; color: var(--ink); line-height: 1.2;
-      margin-bottom: 0.8rem;
+      font-weight: 400; color: var(--ink); line-height: 1.2; margin-bottom: 0.8rem;
     }
     .featured-excerpt {
-      font-size: 0.92rem; color: var(--ink-soft); line-height: 1.75;
-      margin-bottom: 1.4rem;
+      font-size: 0.92rem; color: var(--ink-soft);
+      line-height: 1.75; margin-bottom: 1.4rem;
     }
     .post-meta {
       display: flex; align-items: center; gap: 1rem;
-      font-size: 0.75rem; color: var(--ink-soft);
-      margin-bottom: 1.4rem;
+      font-size: 0.75rem; color: var(--ink-soft); margin-bottom: 1.4rem;
     }
     .post-meta-sep { opacity: 0.3; }
     .read-more-link {
@@ -152,7 +135,7 @@ error_reporting(E_ALL);
     }
     .read-more-link:hover { color: var(--terra); border-color: var(--terra); }
 
-    /* ── BLOG GRID ── */
+    /* ── POSTS GRID ── */
     .posts-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -172,12 +155,10 @@ error_reporting(E_ALL);
     .post-card-img {
       aspect-ratio: 16/9;
       background: linear-gradient(135deg, var(--parchment), #e8d5b5);
-      display: flex; align-items: center; justify-content: center;
-      overflow: hidden;
+      display: flex; align-items: center; justify-content: center; overflow: hidden;
     }
     .post-card-img img {
-      width: 100%; height: 100%; object-fit: cover;
-      transition: transform 0.5s;
+      width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s;
     }
     .post-card:hover .post-card-img img { transform: scale(1.05); }
     .post-card-img-placeholder { font-size: 2.8rem; }
@@ -187,14 +168,14 @@ error_reporting(E_ALL);
     .post-card-title {
       font-family: 'Cormorant Garamond', serif;
       font-size: 1.25rem; font-weight: 500; color: var(--ink);
-      margin: 0.5rem 0 0.5rem; line-height: 1.3;
+      margin: 0.5rem 0; line-height: 1.3;
     }
     .post-card-excerpt {
       font-size: 0.82rem; color: var(--ink-soft);
       line-height: 1.65; flex: 1; margin-bottom: 1rem;
     }
 
-    /* ── POST MODAL (read full post) ── */
+    /* ── POST MODAL ── */
     .post-modal {
       position: fixed; inset: 0;
       background: rgba(28,26,23,0.7);
@@ -202,18 +183,15 @@ error_reporting(E_ALL);
       display: flex; align-items: flex-start; justify-content: center;
       padding: 3rem 1.5rem;
       opacity: 0; pointer-events: none;
-      transition: opacity 0.3s;
-      overflow-y: auto;
+      transition: opacity 0.3s; overflow-y: auto;
     }
     .post-modal.open { opacity: 1; pointer-events: all; }
     .post-modal-inner {
       background: var(--white);
       border-radius: 24px; padding: 3rem;
-      max-width: 720px; width: 100%;
-      position: relative;
+      max-width: 720px; width: 100%; position: relative;
       box-shadow: 0 24px 80px rgba(28,26,23,0.2);
-      transform: translateY(20px);
-      transition: transform 0.3s;
+      transform: translateY(20px); transition: transform 0.3s;
     }
     .post-modal.open .post-modal-inner { transform: translateY(0); }
     .modal-close {
@@ -239,59 +217,42 @@ error_reporting(E_ALL);
       margin-bottom: 2rem; padding-bottom: 1.5rem;
       border-bottom: 1px solid rgba(28,26,23,0.08);
     }
-    .modal-body {
-      font-size: 0.97rem; color: var(--ink-soft);
-      line-height: 1.9;
-    }
+    .modal-body { font-size: 0.97rem; color: var(--ink-soft); line-height: 1.9; }
     .modal-body p { margin-bottom: 1.2rem; }
     .modal-body p:last-child { margin-bottom: 0; }
 
     /* ── EVENTS ── */
     .events-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      margin-bottom: 2.5rem;
-      flex-wrap: wrap; gap: 1rem;
+      display: flex; justify-content: space-between;
+      align-items: flex-end; margin-bottom: 2.5rem; flex-wrap: wrap; gap: 1rem;
     }
     .events-heading {
       font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(2rem, 3vw, 2.8rem);
-      font-weight: 400; color: var(--ink);
+      font-size: clamp(2rem, 3vw, 2.8rem); font-weight: 400; color: var(--ink);
     }
     .events-heading em { font-style: italic; color: var(--green); }
     .events-sub { font-size: 0.88rem; color: var(--ink-soft); margin-top: 0.3rem; }
-
-    .events-list {
-      display: flex; flex-direction: column; gap: 1.2rem;
-    }
+    .events-list { display: flex; flex-direction: column; gap: 1.2rem; }
     .event-card {
       display: grid;
       grid-template-columns: auto 1fr auto;
-      gap: 0 2rem;
-      align-items: start;
+      gap: 0 2rem; align-items: start;
       background: var(--white);
       border: 1px solid rgba(28,26,23,0.07);
       border-radius: 18px; padding: 1.8rem 2rem;
       box-shadow: 0 3px 16px rgba(28,26,23,0.05);
       transition: transform 0.3s, box-shadow 0.3s;
-      position: relative;
-      overflow: hidden;
+      position: relative; overflow: hidden;
     }
     .event-card::before {
-      content: '';
-      position: absolute; left: 0; top: 0; bottom: 0;
-      width: 4px; background: var(--terra);
-      border-radius: 4px 0 0 4px;
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+      width: 4px; background: var(--terra); border-radius: 4px 0 0 4px;
     }
     .event-card:hover {
       transform: translateY(-3px);
       box-shadow: 0 10px 36px rgba(28,26,23,0.1);
     }
-    /* Date block */
-    .event-date-block {
-      text-align: center; min-width: 60px;
-    }
+    .event-date-block { text-align: center; min-width: 60px; }
     .event-month {
       font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em;
       text-transform: uppercase; color: var(--terra);
@@ -300,29 +261,18 @@ error_reporting(E_ALL);
       font-family: 'Cormorant Garamond', serif;
       font-size: 2.4rem; font-weight: 300; color: var(--ink); line-height: 1;
     }
-    .event-year {
-      font-size: 0.72rem; color: var(--ink-soft); margin-top: 0.1rem;
-    }
-    /* Event info */
+    .event-year { font-size: 0.72rem; color: var(--ink-soft); margin-top: 0.1rem; }
     .event-title {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 1.35rem; font-weight: 500; color: var(--ink);
-      margin-bottom: 0.3rem;
+      font-size: 1.35rem; font-weight: 500; color: var(--ink); margin-bottom: 0.3rem;
     }
     .event-location {
       font-size: 0.82rem; color: var(--terra); font-weight: 600;
-      margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.3rem;
+      margin-bottom: 0.5rem;
     }
-    .event-venue {
-      font-size: 0.8rem; color: var(--ink-soft); margin-bottom: 0.5rem;
-    }
-    .event-desc {
-      font-size: 0.85rem; color: var(--ink-soft); line-height: 1.65;
-    }
-    /* CTA button */
-    .event-cta {
-      flex-shrink: 0; align-self: center;
-    }
+    .event-venue { font-size: 0.8rem; color: var(--ink-soft); margin-bottom: 0.5rem; }
+    .event-desc { font-size: 0.85rem; color: var(--ink-soft); line-height: 1.65; }
+    .event-cta { flex-shrink: 0; align-self: center; }
     .event-link-btn {
       display: inline-flex; align-items: center; gap: 0.4rem;
       padding: 0.55rem 1.1rem; border-radius: 99px;
@@ -330,19 +280,13 @@ error_reporting(E_ALL);
       font-family: 'Nunito', sans-serif; font-size: 0.78rem; font-weight: 600;
       text-decoration: none; transition: all 0.2s;
     }
-    .event-link-btn:hover {
-      background: var(--green); color: var(--white);
-    }
-    /* End date badge */
+    .event-link-btn:hover { background: var(--green); color: var(--white); }
     .event-multiday {
-      display: inline-block;
-      font-size: 0.68rem; font-weight: 600; letter-spacing: 0.06em;
+      display: inline-block; font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.06em;
       background: rgba(45,74,62,0.1); color: var(--green);
       padding: 0.15rem 0.55rem; border-radius: 6px; margin-left: 0.4rem;
-      vertical-align: middle;
     }
-
-    /* No events */
     .events-empty {
       text-align: center; padding: 4rem 2rem;
       background: var(--parchment); border-radius: 18px;
@@ -354,7 +298,6 @@ error_reporting(E_ALL);
     }
     .events-empty-body { font-size: 0.88rem; color: var(--ink-soft); }
 
-    /* ── RESPONSIVE ── */
     @media (max-width: 900px) {
       .page-hero { padding: 8rem 1.5rem 3rem; }
       .blog-section, .events-section { padding: 0 1.5rem 5rem; }
@@ -364,45 +307,61 @@ error_reporting(E_ALL);
       .event-card { grid-template-columns: auto 1fr; }
       .event-cta { display: none; }
     }
-    @media (max-width: 600px) {
-      .event-card { grid-template-columns: 1fr; }
-      .event-date-block { display: flex; align-items: center; gap: 0.5rem; }
-      .event-day { font-size: 1.6rem; }
-    }
   </style>
 </head>
 <body>
 
 <?php
-// ── Load data ────────────────────────────────────────────────────────────
+// ── Load data (PHP 7.2 compatible) ────────────────────────────────────────
 $allPosts  = require __DIR__ . '/data/posts.php';
 $allEvents = require __DIR__ . '/data/events.php';
-$today     = date('Y-m-d');
 
-// Filter: published posts only, newest first
-$posts = array_filter($allPosts, fn($p) => $p['published'] === true);
-usort($posts, fn($a, $b) => strcmp($b['date'], $a['date']));
-$posts = array_values($posts);
+// Validate — defensive check in case files return wrong type
+if (!is_array($allPosts))  $allPosts  = array();
+if (!is_array($allEvents)) $allEvents = array();
 
-// Filter: upcoming events only (today or future), sorted soonest first
-$events = array_filter($allEvents, fn($e) => $e['date'] >= $today);
-usort($events, fn($a, $b) => strcmp($a['date'], $b['date']));
-$events = array_values($events);
+$today = date('Y-m-d');
 
-$featuredPost  = $posts[0]  ?? null;
-$remainingPosts = array_slice($posts, 1);
+// Filter published posts
+$posts = array();
+foreach ($allPosts as $p) {
+    if (!empty($p['published']) && $p['published'] === true) {
+        $posts[] = $p;
+    }
+}
 
-// Helper: format date nicely
-function formatDate(string $date): string {
+// Sort posts newest first
+usort($posts, function($a, $b) {
+    return strcmp($b['date'], $a['date']);
+});
+
+// Filter upcoming events
+$events = array();
+foreach ($allEvents as $e) {
+    if ($e['date'] >= $today) {
+        $events[] = $e;
+    }
+}
+
+// Sort events soonest first
+usort($events, function($a, $b) {
+    return strcmp($a['date'], $b['date']);
+});
+
+$featuredPost   = !empty($posts) ? $posts[0] : null;
+$remainingPosts = count($posts) > 1 ? array_slice($posts, 1) : array();
+
+// ── Date helpers ───────────────────────────────────────────────────────────
+function niceDate($date) {
     return date('F j, Y', strtotime($date));
 }
-function formatMonth(string $date): string {
+function shortMonth($date) {
     return strtoupper(date('M', strtotime($date)));
 }
-function formatDay(string $date): string {
+function dayNum($date) {
     return date('j', strtotime($date));
 }
-function formatYear(string $date): string {
+function yearNum($date) {
     return date('Y', strtotime($date));
 }
 ?>
@@ -421,19 +380,13 @@ function formatYear(string $date): string {
   </p>
 </section>
 
-<!-- TAB SWITCHER -->
+<!-- TAB BAR -->
 <div class="tab-bar">
-  <button class="tab-btn active" id="tabBlog"   onclick="switchTab('blog')">
-    ✏️ Blog
-    <?php if (count($posts)): ?>
-      <span style="opacity:0.6; font-size:0.7rem">(<?= count($posts) ?>)</span>
-    <?php endif; ?>
+  <button class="tab-btn active" id="tabBlog" onclick="switchTab('blog')">
+    ✏️ Blog (<?= count($posts) ?>)
   </button>
   <button class="tab-btn" id="tabEvents" onclick="switchTab('events')">
-    📅 Events
-    <?php if (count($events)): ?>
-      <span style="opacity:0.6; font-size:0.7rem">(<?= count($events) ?>)</span>
-    <?php endif; ?>
+    📅 Events (<?= count($events) ?>)
   </button>
 </div>
 
@@ -441,10 +394,9 @@ function formatYear(string $date): string {
 <div class="blog-section" id="blogSection">
 
   <?php if ($featuredPost): ?>
-  <!-- Featured post -->
   <article class="featured-post reveal">
     <div class="featured-img">
-      <?php if ($featuredPost['image']): ?>
+      <?php if (!empty($featuredPost['image'])): ?>
         <img src="<?= htmlspecialchars($featuredPost['image']) ?>"
              alt="<?= htmlspecialchars($featuredPost['title']) ?>" loading="lazy" />
       <?php else: ?>
@@ -455,13 +407,13 @@ function formatYear(string $date): string {
       <span class="post-category-tag"><?= htmlspecialchars($featuredPost['category']) ?></span>
       <h2 class="featured-title"><?= htmlspecialchars($featuredPost['title']) ?></h2>
       <div class="post-meta">
-        <span><?= formatDate($featuredPost['date']) ?></span>
+        <span><?= niceDate($featuredPost['date']) ?></span>
         <span class="post-meta-sep">·</span>
         <span><?= htmlspecialchars($featuredPost['author']) ?></span>
       </div>
       <p class="featured-excerpt"><?= htmlspecialchars($featuredPost['excerpt']) ?></p>
       <a href="#" class="read-more-link"
-         onclick="openPost(<?= $featuredPost['id'] ?>); return false;">
+         onclick="openPost(<?= (int)$featuredPost['id'] ?>); return false;">
         Read the full post
         <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
@@ -470,12 +422,11 @@ function formatYear(string $date): string {
   <?php endif; ?>
 
   <?php if (!empty($remainingPosts)): ?>
-  <!-- Remaining posts grid -->
   <div class="posts-grid reveal">
     <?php foreach ($remainingPosts as $post): ?>
     <article class="post-card">
       <div class="post-card-img">
-        <?php if ($post['image']): ?>
+        <?php if (!empty($post['image'])): ?>
           <img src="<?= htmlspecialchars($post['image']) ?>"
                alt="<?= htmlspecialchars($post['title']) ?>" loading="lazy" />
         <?php else: ?>
@@ -487,10 +438,10 @@ function formatYear(string $date): string {
         <h3 class="post-card-title"><?= htmlspecialchars($post['title']) ?></h3>
         <p class="post-card-excerpt"><?= htmlspecialchars($post['excerpt']) ?></p>
         <div class="post-meta" style="margin-bottom:1rem">
-          <span><?= formatDate($post['date']) ?></span>
+          <span><?= niceDate($post['date']) ?></span>
         </div>
         <a href="#" class="read-more-link"
-           onclick="openPost(<?= $post['id'] ?>); return false;">
+           onclick="openPost(<?= (int)$post['id'] ?>); return false;">
           Read more
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </a>
@@ -525,45 +476,36 @@ function formatYear(string $date): string {
   <div class="events-list reveal">
     <?php foreach ($events as $event): ?>
     <div class="event-card">
-      <!-- Date -->
       <div class="event-date-block">
-        <div class="event-month"><?= formatMonth($event['date']) ?></div>
-        <div class="event-day"><?= formatDay($event['date']) ?></div>
-        <div class="event-year"><?= formatYear($event['date']) ?></div>
+        <div class="event-month"><?= shortMonth($event['date']) ?></div>
+        <div class="event-day"><?= dayNum($event['date']) ?></div>
+        <div class="event-year"><?= yearNum($event['date']) ?></div>
       </div>
-
-      <!-- Info -->
       <div class="event-info">
         <h3 class="event-title">
           <?= htmlspecialchars($event['title']) ?>
-          <?php if ($event['end_date']): ?>
+          <?php if (!empty($event['end_date'])): ?>
             <span class="event-multiday">
-              Multi-day · ends <?= date('M j', strtotime($event['end_date'])) ?>
+              Multi-day &middot; ends <?= date('M j', strtotime($event['end_date'])) ?>
             </span>
           <?php endif; ?>
         </h3>
-        <div class="event-location">
-          📍 <?= htmlspecialchars($event['location']) ?>
-        </div>
-        <?php if ($event['venue']): ?>
+        <div class="event-location">📍 <?= htmlspecialchars($event['location']) ?></div>
+        <?php if (!empty($event['venue'])): ?>
           <div class="event-venue"><?= htmlspecialchars($event['venue']) ?></div>
         <?php endif; ?>
-        <?php if ($event['description']): ?>
+        <?php if (!empty($event['description'])): ?>
           <div class="event-desc"><?= htmlspecialchars($event['description']) ?></div>
         <?php endif; ?>
       </div>
-
-      <!-- CTA -->
       <div class="event-cta">
-        <?php if ($event['link']): ?>
+        <?php if (!empty($event['link'])): ?>
           <a href="<?= htmlspecialchars($event['link']) ?>"
              class="event-link-btn" target="_blank" rel="noopener">
-            View event →
+            View event &rarr;
           </a>
         <?php else: ?>
-          <a href="contact.php" class="event-link-btn">
-            Ask a question →
-          </a>
+          <a href="contact.php" class="event-link-btn">Ask a question &rarr;</a>
         <?php endif; ?>
       </div>
     </div>
@@ -574,7 +516,7 @@ function formatYear(string $date): string {
   <div class="events-empty">
     <div class="events-empty-icon">📅</div>
     <div class="events-empty-title">No upcoming events scheduled</div>
-    <p class="events-empty-body">Check back soon — new dates are added regularly. Follow on social media for announcements.</p>
+    <p class="events-empty-body">Check back soon — new dates are added regularly.</p>
   </div>
   <?php endif; ?>
 
@@ -584,11 +526,11 @@ function formatYear(string $date): string {
 <!-- POST MODAL -->
 <div class="post-modal" id="postModal" onclick="handleModalClick(event)">
   <div class="post-modal-inner" id="postModalInner">
-    <button class="modal-close" onclick="closePost()">✕</button>
+    <button class="modal-close" onclick="closePost()">&#x2715;</button>
     <div class="modal-category" id="modalCategory"></div>
-    <h2 class="modal-title" id="modalTitle"></h2>
-    <div class="modal-meta" id="modalMeta"></div>
-    <div class="modal-body" id="modalBody"></div>
+    <h2 class="modal-title"    id="modalTitle"></h2>
+    <div class="modal-meta"    id="modalMeta"></div>
+    <div class="modal-body"    id="modalBody"></div>
   </div>
 </div>
 
@@ -598,10 +540,10 @@ function formatYear(string $date): string {
 <script>
 // ── Tab switcher ──
 function switchTab(tab) {
-  const blogSection   = document.getElementById('blogSection');
-  const eventsSection = document.getElementById('eventsSection');
-  const tabBlog       = document.getElementById('tabBlog');
-  const tabEvents     = document.getElementById('tabEvents');
+  var blogSection   = document.getElementById('blogSection');
+  var eventsSection = document.getElementById('eventsSection');
+  var tabBlog       = document.getElementById('tabBlog');
+  var tabEvents     = document.getElementById('tabEvents');
 
   if (tab === 'blog') {
     blogSection.style.display   = '';
@@ -616,27 +558,33 @@ function switchTab(tab) {
   }
 }
 
-// ── Post data (PHP → JS) ──
-const posts = <?php
-  $jsPostData = array_map(fn($p) => [
-    'id'       => $p['id'],
-    'title'    => $p['title'],
-    'category' => $p['category'],
-    'author'   => $p['author'],
-    'date'     => date('F j, Y', strtotime($p['date'])),
-    'body'     => $p['body'],
-  ], $posts);
-  echo json_encode($jsPostData);
+// ── Post data passed from PHP ──
+var posts = <?php
+  $jsData = array();
+  foreach ($posts as $p) {
+    $jsData[] = array(
+      'id'       => (int)$p['id'],
+      'title'    => $p['title'],
+      'category' => $p['category'],
+      'author'   => $p['author'],
+      'date'     => niceDate($p['date']),
+      'body'     => $p['body'],
+    );
+  }
+  echo json_encode($jsData);
 ?>;
 
 // ── Post modal ──
 function openPost(id) {
-  const post = posts.find(p => p.id === id);
+  var post = null;
+  for (var i = 0; i < posts.length; i++) {
+    if (posts[i].id === id) { post = posts[i]; break; }
+  }
   if (!post) return;
 
   document.getElementById('modalCategory').textContent = post.category;
   document.getElementById('modalTitle').textContent    = post.title;
-  document.getElementById('modalMeta').textContent     = `${post.date} · ${post.author}`;
+  document.getElementById('modalMeta').textContent     = post.date + ' \u00b7 ' + post.author;
   document.getElementById('modalBody').innerHTML       = post.body;
 
   document.getElementById('postModal').classList.add('open');
@@ -652,11 +600,10 @@ function handleModalClick(e) {
   if (e.target === document.getElementById('postModal')) closePost();
 }
 
-document.addEventListener('keydown', e => {
+document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') closePost();
 });
 
-// Open events tab directly if URL has #events
 if (window.location.hash === '#events') switchTab('events');
 </script>
 </body>
