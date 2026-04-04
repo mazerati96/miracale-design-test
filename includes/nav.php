@@ -239,10 +239,12 @@
   <ul class="nav-links">
     <li><a href="index.php"       class="<?= $current === 'index'       ? 'active' : '' ?>">Home</a></li>
     <li><a href="shop.php"        class="<?= $current === 'shop'        ? 'active' : '' ?>">Shop</a></li>
-    <li><a href="portfolio.php"   class="<?= $current === 'portfolio'   ? 'active' : '' ?>">Portfolio</a></li>
+     <li><a href="commissions.php" class="<?= $current === 'commissions' ? 'active' : '' ?>">Commissions</a></li>
+    
     <li><a href="blog.php"        class="<?= $current === 'blog'        ? 'active' : '' ?>">Blog</a></li>
-    <li><a href="commissions.php" class="<?= $current === 'commissions' ? 'active' : '' ?>">Commissions</a></li>
+   
     <li><a href="about.php"       class="<?= $current === 'about'       ? 'active' : '' ?>">About</a></li>
+    <li><a href="portfolio.php"   class="<?= $current === 'portfolio'   ? 'active' : '' ?>">Portfolio</a></li>
     <li><a href="reviews.php"     class="<?= $current === 'reviews'     ? 'active' : '' ?>">Reviews</a></li>
     <li><a href="contact.php"     class="<?= $current === 'contact'     ? 'active' : '' ?>">Contact</a></li>
   </ul>
