@@ -312,11 +312,17 @@
 <body>
 
 <?php
-// ── Load data (PHP 7.2 compatible) ────────────────────────────────────────
-$allPosts  = require __DIR__ . '/data/posts.php';
-$allEvents = require __DIR__ . '/data/events.php';
+// ── Load data from JSON ───────────────────────────────────────────────────
+$postsJson  = __DIR__ . '/data/posts.json';
+$eventsJson = __DIR__ . '/data/events.json';
 
-// Validate — defensive check in case files return wrong type
+$allPosts  = file_exists($postsJson)
+    ? json_decode(file_get_contents($postsJson), true)
+    : array();
+$allEvents = file_exists($eventsJson)
+    ? json_decode(file_get_contents($eventsJson), true)
+    : array();
+
 if (!is_array($allPosts))  $allPosts  = array();
 if (!is_array($allEvents)) $allEvents = array();
 

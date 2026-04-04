@@ -361,3 +361,23 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+
+
+
+# Sensitive config - NEVER commit these
+config/stripe.php
+config/admin.php
+
+# Composer dependencies - install on server via SSH
+vendor/
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
