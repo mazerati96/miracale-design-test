@@ -1,34 +1,16 @@
 <?php
-// Force errors to display no matter what server settings say
-@ini_set('display_errors', 1);
-@ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-// ── STEP 1: Session check (before requiring auth.php) ─────────────────────
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-echo '<pre style="font-family:monospace; font-size:13px; padding:1rem; background:#f9f6f2; border-bottom:1px solid #ddd">';
-echo '<strong>Miracale Design Admin — Diagnostics</strong>' . "\n\n";
-
-echo '1. PHP Version: ' . phpversion() . "\n";
-echo '2. Session ID: ' . session_id() . "\n";
-echo '3. Session data: ';
-print_r($_SESSION);
-echo "\n";
-
-// ── STEP 2: Config file check ─────────────────────────────────────────────
+// Load config
 $configPath = dirname(__DIR__) . '/config/admin.php';
-echo '4. Config file exists: ' . (file_exists($configPath) ? 'YES ✓' : 'NO ✗ — upload config/admin.php via File Manager') . "\n";
-
-if (file_exists($configPath)) {
-    require_once $configPath;
-    echo '5. ADMIN_USERNAME defined: ' . (defined('ADMIN_USERNAME') ? 'YES (' . ADMIN_USERNAME . ') ✓' : 'NO ✗') . "\n";
-    echo '6. ADMIN_PASSWORD_HASH defined: ' . (defined('ADMIN_PASSWORD_HASH') ? 'YES ✓' : 'NO ✗') . "\n";
+if (!file_exists($configPath)) {
+    die('Configuration file missing. Upload config/admin.php via File Manager.');
 }
+require_once $configPath;
 
-// ── STEP 3: Session validity ──────────────────────────────────────────────
+// Auth check
 $loggedIn = (
     isset($_SESSION['admin_logged_in']) &&
     $_SESSION['admin_logged_in'] === true &&
@@ -38,37 +20,16 @@ $loggedIn = (
     isset($_SESSION['admin_expires']) &&
     $_SESSION['admin_expires'] > time()
 );
-echo '7. Logged in: ' . ($loggedIn ? 'YES ✓' : 'NO ✗') . "\n";
-if (isset($_SESSION['admin_expires'])) {
-    echo '   Session expires: ' . date('Y-m-d H:i:s', $_SESSION['admin_expires']) . "\n";
-    echo '   Current time:    ' . date('Y-m-d H:i:s', time()) . "\n";
-}
-
-// ── STEP 4: Data files ────────────────────────────────────────────────────
-$postsPath  = dirname(__DIR__) . '/data/posts.json';
-$eventsPath = dirname(__DIR__) . '/data/events.json';
-echo '8. posts.json exists: '  . (file_exists($postsPath)  ? 'YES ✓' : 'NO ✗ — create data/posts.json with content []') . "\n";
-echo '9. events.json exists: ' . (file_exists($eventsPath) ? 'YES ✓' : 'NO ✗ — create data/events.json with content []') . "\n";
-
-// ── STEP 5: Includes ──────────────────────────────────────────────────────
-echo '10. admin-nav.php exists: ' . (file_exists(__DIR__ . '/admin-nav.php') ? 'YES ✓' : 'NO ✗') . "\n";
-echo '11. admin.css exists: '     . (file_exists(__DIR__ . '/admin.css')     ? 'YES ✓' : 'NO ✗') . "\n";
-
-echo '</pre>';
 
 if (!$loggedIn) {
-    echo '<p style="font-family:sans-serif; padding:1rem; color:#C9683A">
-        ⚠️ You are NOT logged in. <a href="../login.php">Go to login →</a>
-    </p>';
+    header('Location: ../login.php');
     exit;
 }
 
-// ── If everything checks out, show the real dashboard ─────────────────────
-echo '<p style="font-family:sans-serif; padding:1rem; color:#2D4A3E; background:#f0f9f5; border:1px solid #c3e6cb; margin:1rem">
-    ✅ All checks passed — loading real dashboard below...
-</p>';
-
 // Load data
+$postsPath  = dirname(__DIR__) . '/data/posts.json';
+$eventsPath = dirname(__DIR__) . '/data/events.json';
+
 $posts  = array();
 $events = array();
 if (file_exists($postsPath))  { $d = json_decode(file_get_contents($postsPath),  true); if (is_array($d)) $posts  = $d; }
