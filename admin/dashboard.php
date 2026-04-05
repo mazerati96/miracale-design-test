@@ -1,39 +1,84 @@
 <?php
-// Turn on errors temporarily so we can see any issues
-// REMOVE these two lines once the dashboard is confirmed working
-ini_set('display_errors', 1);
+// Force errors to display no matter what server settings say
+@ini_set('display_errors', 1);
+@ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require_once 'auth.php';
+// ── STEP 1: Session check (before requiring auth.php) ─────────────────────
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-// ── Load data defensively ─────────────────────────────────────────────────
+echo '<pre style="font-family:monospace; font-size:13px; padding:1rem; background:#f9f6f2; border-bottom:1px solid #ddd">';
+echo '<strong>Miracale Design Admin — Diagnostics</strong>' . "\n\n";
+
+echo '1. PHP Version: ' . phpversion() . "\n";
+echo '2. Session ID: ' . session_id() . "\n";
+echo '3. Session data: ';
+print_r($_SESSION);
+echo "\n";
+
+// ── STEP 2: Config file check ─────────────────────────────────────────────
+$configPath = dirname(__DIR__) . '/config/admin.php';
+echo '4. Config file exists: ' . (file_exists($configPath) ? 'YES ✓' : 'NO ✗ — upload config/admin.php via File Manager') . "\n";
+
+if (file_exists($configPath)) {
+    require_once $configPath;
+    echo '5. ADMIN_USERNAME defined: ' . (defined('ADMIN_USERNAME') ? 'YES (' . ADMIN_USERNAME . ') ✓' : 'NO ✗') . "\n";
+    echo '6. ADMIN_PASSWORD_HASH defined: ' . (defined('ADMIN_PASSWORD_HASH') ? 'YES ✓' : 'NO ✗') . "\n";
+}
+
+// ── STEP 3: Session validity ──────────────────────────────────────────────
+$loggedIn = (
+    isset($_SESSION['admin_logged_in']) &&
+    $_SESSION['admin_logged_in'] === true &&
+    defined('ADMIN_USERNAME') &&
+    isset($_SESSION['admin_user']) &&
+    $_SESSION['admin_user'] === ADMIN_USERNAME &&
+    isset($_SESSION['admin_expires']) &&
+    $_SESSION['admin_expires'] > time()
+);
+echo '7. Logged in: ' . ($loggedIn ? 'YES ✓' : 'NO ✗') . "\n";
+if (isset($_SESSION['admin_expires'])) {
+    echo '   Session expires: ' . date('Y-m-d H:i:s', $_SESSION['admin_expires']) . "\n";
+    echo '   Current time:    ' . date('Y-m-d H:i:s', time()) . "\n";
+}
+
+// ── STEP 4: Data files ────────────────────────────────────────────────────
 $postsPath  = dirname(__DIR__) . '/data/posts.json';
 $eventsPath = dirname(__DIR__) . '/data/events.json';
+echo '8. posts.json exists: '  . (file_exists($postsPath)  ? 'YES ✓' : 'NO ✗ — create data/posts.json with content []') . "\n";
+echo '9. events.json exists: ' . (file_exists($eventsPath) ? 'YES ✓' : 'NO ✗ — create data/events.json with content []') . "\n";
 
+// ── STEP 5: Includes ──────────────────────────────────────────────────────
+echo '10. admin-nav.php exists: ' . (file_exists(__DIR__ . '/admin-nav.php') ? 'YES ✓' : 'NO ✗') . "\n";
+echo '11. admin.css exists: '     . (file_exists(__DIR__ . '/admin.css')     ? 'YES ✓' : 'NO ✗') . "\n";
+
+echo '</pre>';
+
+if (!$loggedIn) {
+    echo '<p style="font-family:sans-serif; padding:1rem; color:#C9683A">
+        ⚠️ You are NOT logged in. <a href="../login.php">Go to login →</a>
+    </p>';
+    exit;
+}
+
+// ── If everything checks out, show the real dashboard ─────────────────────
+echo '<p style="font-family:sans-serif; padding:1rem; color:#2D4A3E; background:#f0f9f5; border:1px solid #c3e6cb; margin:1rem">
+    ✅ All checks passed — loading real dashboard below...
+</p>';
+
+// Load data
 $posts  = array();
 $events = array();
-
-if (file_exists($postsPath)) {
-    $decoded = json_decode(file_get_contents($postsPath), true);
-    if (is_array($decoded)) $posts = $decoded;
-}
-if (file_exists($eventsPath)) {
-    $decoded = json_decode(file_get_contents($eventsPath), true);
-    if (is_array($decoded)) $events = $decoded;
-}
+if (file_exists($postsPath))  { $d = json_decode(file_get_contents($postsPath),  true); if (is_array($d)) $posts  = $d; }
+if (file_exists($eventsPath)) { $d = json_decode(file_get_contents($eventsPath), true); if (is_array($d)) $events = $d; }
 
 $today     = date('Y-m-d');
-$published = 0;
-$drafts    = 0;
-foreach ($posts as $p) {
-    if (!empty($p['published'])) $published++;
-    else $drafts++;
-}
+$published = 0; $drafts = 0;
+foreach ($posts as $p) { if (!empty($p['published'])) $published++; else $drafts++; }
 $upcoming = 0;
-foreach ($events as $e) {
-    if (!empty($e['date']) && $e['date'] >= $today) $upcoming++;
-}
-
+foreach ($events as $e) { if (!empty($e['date']) && $e['date'] >= $today) $upcoming++; }
 $recentPosts = array_slice(array_reverse($posts), 0, 5);
 ?>
 <!DOCTYPE html>
@@ -55,25 +100,21 @@ $recentPosts = array_slice(array_reverse($posts), 0, 5);
 <main class="admin-main">
   <div class="admin-container">
 
-    <!-- Header -->
     <div class="admin-page-header">
       <div>
         <h1 class="admin-page-title">
           <?php
             $h = (int)date('H');
-            if ($h < 12)      echo 'Good morning';
-            elseif ($h < 17)  echo 'Good afternoon';
-            else              echo 'Good evening';
+            if ($h < 12) echo 'Good morning';
+            elseif ($h < 17) echo 'Good afternoon';
+            else echo 'Good evening';
           ?>, <?= htmlspecialchars(ADMIN_USERNAME) ?> 🎨
         </h1>
         <p class="admin-page-sub">Here's what's going on with your site.</p>
       </div>
-      <a href="../index.php" target="_blank" class="admin-btn admin-btn-ghost">
-        View Site ↗
-      </a>
+      <a href="../index.php" target="_blank" class="admin-btn admin-btn-ghost">View Site ↗</a>
     </div>
 
-    <!-- Stats -->
     <div class="stat-grid">
       <div class="stat-card">
         <div class="stat-icon">✏️</div>
@@ -101,7 +142,6 @@ $recentPosts = array_slice(array_reverse($posts), 0, 5);
       </div>
     </div>
 
-    <!-- Quick actions -->
     <div class="admin-section">
       <h2 class="admin-section-title">Quick Actions</h2>
       <div class="quick-actions">
@@ -129,7 +169,6 @@ $recentPosts = array_slice(array_reverse($posts), 0, 5);
       </div>
     </div>
 
-    <!-- Recent posts -->
     <div class="admin-section">
       <div class="admin-section-header">
         <h2 class="admin-section-title">Recent Posts</h2>
@@ -144,13 +183,7 @@ $recentPosts = array_slice(array_reverse($posts), 0, 5);
         <div class="admin-table-wrap">
           <table class="admin-table">
             <thead>
-              <tr>
-                <th>Title</th>
-                <th>Category</th>
-                <th>Date</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
+              <tr><th>Title</th><th>Category</th><th>Date</th><th>Status</th><th>Actions</th></tr>
             </thead>
             <tbody>
               <?php foreach ($recentPosts as $post): ?>
@@ -179,6 +212,5 @@ $recentPosts = array_slice(array_reverse($posts), 0, 5);
 
   </div>
 </main>
-
 </body>
 </html>
