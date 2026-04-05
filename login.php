@@ -1,3 +1,65 @@
+<?php
+// ── ALL PHP LOGIC FIRST — must come before any HTML output ────────────────
+
+ini_set('session.save_path', sys_get_temp_dir()); // Hostinger session fix
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Load config
+$configPath = __DIR__ . '/config/admin.php';
+$configured = file_exists($configPath);
+if ($configured) require_once $configPath;
+
+$error     = '';
+$loggedOut = isset($_GET['logged_out']);
+$redirectTo = isset($_GET['redirect']) ? $_GET['redirect'] : 'admin/dashboard.php';
+
+// Already logged in? Redirect straight to dashboard (before any HTML)
+if ($configured &&
+    isset($_SESSION['admin_logged_in']) &&
+    $_SESSION['admin_logged_in'] === true &&
+    isset($_SESSION['admin_expires']) &&
+    $_SESSION['admin_expires'] > time()) {
+    header('Location: /admin/dashboard.php');
+    exit;
+}
+
+// Handle POST login
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $configured) {
+    $username = trim($_POST['username'] ?? '');
+    $password = $_POST['password'] ?? '';
+
+    // Rate-limit: max 5 attempts per 15 minutes per IP
+    $ipKey    = 'login_attempts_' . md5($_SERVER['REMOTE_ADDR'] ?? '');
+    $attempts = $_SESSION[$ipKey] ?? 0;
+    $lockout  = $_SESSION[$ipKey . '_time'] ?? 0;
+
+    if ($attempts >= 5 && (time() - $lockout) < 900) {
+        $error = 'Too many attempts. Please wait 15 minutes and try again.';
+    } elseif ($username === ADMIN_USERNAME &&
+              password_verify($password, ADMIN_PASSWORD_HASH)) {
+        // Success — regenerate session and store auth data
+        session_regenerate_id(true);
+        $_SESSION['admin_logged_in'] = true;
+        $_SESSION['admin_user']      = ADMIN_USERNAME;
+        $_SESSION['admin_expires']   = time() + ADMIN_SESSION_LIFETIME;
+        // Clear rate-limit attempts
+        unset($_SESSION[$ipKey], $_SESSION[$ipKey . '_time']);
+        // Absolute redirect so it works on all Hostinger hosts
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $host     = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        header('Location: ' . $protocol . '://' . $host . '/admin/dashboard.php');
+        exit;
+    } else {
+        // Failed — increment counter
+        $_SESSION[$ipKey]           = $attempts + 1;
+        $_SESSION[$ipKey . '_time'] = time();
+        $error = 'Incorrect username or password.';
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -138,62 +200,6 @@
   </style>
 </head>
 <body>
-
-<?php
-session_start();
-
-// Load config
-$configPath = __DIR__ . '/config/admin.php';
-$configured = file_exists($configPath);
-if ($configured) require_once $configPath;
-
-$error      = '';
-$loggedOut  = isset($_GET['logged_out']);
-$redirectTo = isset($_GET['redirect']) ? $_GET['redirect'] : 'admin/dashboard.php';
-
-// Already logged in? Redirect straight to dashboard
-if ($configured && isset($_SESSION['admin_logged_in']) &&
-    $_SESSION['admin_logged_in'] === true &&
-    isset($_SESSION['admin_expires']) &&
-    $_SESSION['admin_expires'] > time()) {
-    header('Location: admin/dashboard.php');
-    exit;
-}
-
-// Handle POST
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && $configured) {
-    $username = trim($_POST['username'] ?? '');
-    $password = $_POST['password'] ?? '';
-
-    // Rate-limit: max 5 attempts per 15 minutes per IP
-    $ipKey    = 'login_attempts_' . md5($_SERVER['REMOTE_ADDR'] ?? '');
-    $attempts = isset($_SESSION[$ipKey]) ? $_SESSION[$ipKey] : 0;
-    $lockout  = isset($_SESSION[$ipKey . '_time']) ? $_SESSION[$ipKey . '_time'] : 0;
-
-    if ($attempts >= 5 && (time() - $lockout) < 900) {
-        $error = 'Too many attempts. Please wait 15 minutes and try again.';
-    } elseif ($username === ADMIN_USERNAME &&
-              password_verify($password, ADMIN_PASSWORD_HASH)) {
-        // Success — start session
-        session_regenerate_id(true);
-        $_SESSION['admin_logged_in'] = true;
-        $_SESSION['admin_user']      = ADMIN_USERNAME;
-        $_SESSION['admin_expires']   = time() + ADMIN_SESSION_LIFETIME;
-        // Clear attempts
-        unset($_SESSION[$ipKey], $_SESSION[$ipKey . '_time']);
-        // Redirect using absolute URL so it works on all hosts
-        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-        $host     = $_SERVER['HTTP_HOST'] ?? 'localhost';
-        header('Location: ' . $protocol . '://' . $host . '/admin/dashboard.php');
-        exit;
-    } else {
-        // Failed — increment counter
-        $_SESSION[$ipKey]            = $attempts + 1;
-        $_SESSION[$ipKey . '_time']  = time();
-        $error = 'Incorrect username or password.';
-    }
-}
-?>
 
 <div class="bg-blob bg-blob-1"></div>
 <div class="bg-blob bg-blob-2"></div>
