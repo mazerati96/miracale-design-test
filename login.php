@@ -1,7 +1,7 @@
 <?php
 // ── ALL PHP LOGIC FIRST — must come before any HTML output ────────────────
 
-ini_set('session.save_path', sys_get_temp_dir()); // Hostinger session fix
+
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
