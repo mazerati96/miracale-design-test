@@ -1,3 +1,41 @@
+<?php
+// Turn on errors temporarily so we can see any issues
+// REMOVE these two lines once the dashboard is confirmed working
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+require_once 'auth.php';
+
+// ── Load data defensively ─────────────────────────────────────────────────
+$postsPath  = dirname(__DIR__) . '/data/posts.json';
+$eventsPath = dirname(__DIR__) . '/data/events.json';
+
+$posts  = array();
+$events = array();
+
+if (file_exists($postsPath)) {
+    $decoded = json_decode(file_get_contents($postsPath), true);
+    if (is_array($decoded)) $posts = $decoded;
+}
+if (file_exists($eventsPath)) {
+    $decoded = json_decode(file_get_contents($eventsPath), true);
+    if (is_array($decoded)) $events = $decoded;
+}
+
+$today     = date('Y-m-d');
+$published = 0;
+$drafts    = 0;
+foreach ($posts as $p) {
+    if (!empty($p['published'])) $published++;
+    else $drafts++;
+}
+$upcoming = 0;
+foreach ($events as $e) {
+    if (!empty($e['date']) && $e['date'] >= $today) $upcoming++;
+}
+
+$recentPosts = array_slice(array_reverse($posts), 0, 5);
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,35 +50,6 @@
 </head>
 <body class="admin-body">
 
-<?php
-require_once 'auth.php';
-
-// Load data
-$postsPath  = dirname(__DIR__) . '/data/posts.json';
-$eventsPath = dirname(__DIR__) . '/data/events.json';
-
-$posts  = file_exists($postsPath)  ? json_decode(file_get_contents($postsPath),  true) : array();
-$events = file_exists($eventsPath) ? json_decode(file_get_contents($eventsPath), true) : array();
-
-if (!is_array($posts))  $posts  = array();
-if (!is_array($events)) $events = array();
-
-$today       = date('Y-m-d');
-$published   = 0;
-$drafts      = 0;
-foreach ($posts as $p) {
-    if (!empty($p['published'])) $published++;
-    else $drafts++;
-}
-$upcoming = 0;
-foreach ($events as $e) {
-    if (!empty($e['date']) && $e['date'] >= $today) $upcoming++;
-}
-
-// Recent posts (last 5)
-$recentPosts = array_slice(array_reverse($posts), 0, 5);
-?>
-
 <?php include 'admin-nav.php'; ?>
 
 <main class="admin-main">
@@ -50,9 +59,11 @@ $recentPosts = array_slice(array_reverse($posts), 0, 5);
     <div class="admin-page-header">
       <div>
         <h1 class="admin-page-title">
-          Good <?php
+          <?php
             $h = (int)date('H');
-            echo $h < 12 ? 'morning' : ($h < 17 ? 'afternoon' : 'evening');
+            if ($h < 12)      echo 'Good morning';
+            elseif ($h < 17)  echo 'Good afternoon';
+            else              echo 'Good evening';
           ?>, <?= htmlspecialchars(ADMIN_USERNAME) ?> 🎨
         </h1>
         <p class="admin-page-sub">Here's what's going on with your site.</p>
@@ -62,7 +73,7 @@ $recentPosts = array_slice(array_reverse($posts), 0, 5);
       </a>
     </div>
 
-    <!-- Stats cards -->
+    <!-- Stats -->
     <div class="stat-grid">
       <div class="stat-card">
         <div class="stat-icon">✏️</div>
@@ -107,9 +118,10 @@ $recentPosts = array_slice(array_reverse($posts), 0, 5);
         <a href="../commissions.php" target="_blank" class="quick-action-card">
           <div class="quick-action-icon">🎨</div>
           <div class="quick-action-label">Commission Status</div>
-          <div class="quick-action-desc">Toggle open/closed status</div>
+          <div class="quick-action-desc">Toggle open/closed</div>
         </a>
-        <a href="../shop.php" target="_blank" class="quick-action-card">
+        <a href="https://dashboard.stripe.com/products" target="_blank"
+           rel="noopener" class="quick-action-card">
           <div class="quick-action-icon">🛍️</div>
           <div class="quick-action-label">Manage Shop</div>
           <div class="quick-action-desc">Add products in Stripe</div>
@@ -143,7 +155,7 @@ $recentPosts = array_slice(array_reverse($posts), 0, 5);
             <tbody>
               <?php foreach ($recentPosts as $post): ?>
               <tr>
-                <td class="td-title"><?= htmlspecialchars($post['title']) ?></td>
+                <td class="td-title"><?= htmlspecialchars($post['title'] ?? '') ?></td>
                 <td><?= htmlspecialchars($post['category'] ?? '—') ?></td>
                 <td><?= htmlspecialchars($post['date'] ?? '—') ?></td>
                 <td>
@@ -154,7 +166,7 @@ $recentPosts = array_slice(array_reverse($posts), 0, 5);
                   <?php endif; ?>
                 </td>
                 <td>
-                  <a href="posts.php?action=edit&id=<?= (int)$post['id'] ?>"
+                  <a href="posts.php?action=edit&id=<?= (int)($post['id'] ?? 0) ?>"
                      class="admin-table-link">Edit</a>
                 </td>
               </tr>
@@ -168,6 +180,5 @@ $recentPosts = array_slice(array_reverse($posts), 0, 5);
   </div>
 </main>
 
-<script src="../script.js"></script>
 </body>
 </html>

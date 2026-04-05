@@ -181,7 +181,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $configured) {
         $_SESSION['admin_expires']   = time() + ADMIN_SESSION_LIFETIME;
         // Clear attempts
         unset($_SESSION[$ipKey], $_SESSION[$ipKey . '_time']);
-        header('Location: admin/dashboard.php');
+        // Redirect using absolute URL so it works on all hosts
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $host     = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        header('Location: ' . $protocol . '://' . $host . '/admin/dashboard.php');
         exit;
     } else {
         // Failed — increment counter
