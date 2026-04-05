@@ -247,6 +247,8 @@
     <li><a href="portfolio.php"   class="<?= $current === 'portfolio'   ? 'active' : '' ?>">Portfolio</a></li>
     <li><a href="reviews.php"     class="<?= $current === 'reviews'     ? 'active' : '' ?>">Reviews</a></li>
     <li><a href="contact.php"     class="<?= $current === 'contact'     ? 'active' : '' ?>">Contact</a></li>
+    <li><a href="login.php"       class="<?= $current === 'login'       ? 'active' : '' ?>">Artist Login</a></li>
+
   </ul>
 
   <!-- Social icons — update hrefs with real URLs -->
