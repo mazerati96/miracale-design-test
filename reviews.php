@@ -535,8 +535,7 @@
     <div class="review-card featured">
       <div class="review-stars">★★★★★</div>
       <p class="review-text">
-        "Super cute and looks AMAZING! Couldn't be happier with my purchase —
-        the detail is incredible for something handmade."
+        "Super cute and looks AMAZING!"
       </p>
       <div class="review-meta">
         <div class="review-avatar">🌟</div>
