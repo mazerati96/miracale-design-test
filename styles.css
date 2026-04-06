@@ -49,7 +49,8 @@ body {
     padding: 7rem 3rem 4rem;
     gap: 3rem;
     position: relative;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: visible;
 }
 
 .hero-blob {
@@ -290,7 +291,7 @@ body {
     }
 
 .hero-badge {
-    position: absolute;
+    position: absolute; /*changed from absolute*/
     bottom: 110px;
     left: -90px; /*changed from -10px to move more left*/
     background: var(--white);
