@@ -200,24 +200,24 @@
 
         <div class="spotlight-visual">
             <div class="spotlight-card">
-                <div class="spotlight-card-icon">🐾</div>
-                <div class="spotlight-card-name">Clay Art</div>
-                <div class="spotlight-card-desc">Hand-sculpted animals &amp; figures</div>
+                <img src="assets/bb8-coaster.png"
+                     alt="Handcrafted wood art and coasters"
+                     style="width:100%; height:100%; object-fit:cover; display:block;" />
             </div>
             <div class="spotlight-card">
-                <div class="spotlight-card-icon">🎨</div>
-                <div class="spotlight-card-name">Watercolors</div>
-                <div class="spotlight-card-desc">Original painted pieces</div>
+                <img src="assets/howls-moving-castle.png"
+                     alt="Handcrafted wood art and coasters"
+                     style="width:100%; height:100%; object-fit:cover; display:block;" />
             </div>
             <div class="spotlight-card">
-                <div class="spotlight-card-icon">🪵</div>
-                <div class="spotlight-card-name">Wood Art</div>
-                <div class="spotlight-card-desc">Carved &amp; textured works</div>
+                <img src="assets/raccoon.png"
+                     alt="Handcrafted wood art and coasters"
+                     style="width:100%; height:100%; object-fit:cover; display:block;" />
             </div>
             <div class="spotlight-card">
-                <div class="spotlight-card-icon">🗝️</div>
-                <div class="spotlight-card-name">Keychains</div>
-                <div class="spotlight-card-desc">Wearable handmade art</div>
+                <img src="assets/clay-earrings.png"
+                     alt="Handcrafted wood art and coasters"
+                     style="width:100%; height:100%; object-fit:cover; display:block;" />
             </div>
         </div>
     </section>
