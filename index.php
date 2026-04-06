@@ -46,28 +46,24 @@
 
         <div class="hero-collage">
             <div class="collage-card card-1">
-                <div class="card-placeholder">
-                    <div class="icon">🎨</div>
-                    <div class="label">Watercolors</div>
-                </div>
+                <img src="assets/elephant.png"
+                     alt="Handmade clay animal figures"
+                     style="width:100%; height:100%; object-fit:fill; display:block;" />
             </div>
             <div class="collage-card card-2">
-                <div class="card-placeholder">
-                    <div class="icon">🐾</div>
-                    <div class="label">Clay Animals</div>
-                </div>
+                <img src="assets/scarecrow-coaster.png"
+                     alt="Handmade clay animal figures"
+                     style="width:100%; height:100%; object-fit:fill; display:block;" />
             </div>
             <div class="collage-card card-3">
-                <div class="card-placeholder">
-                    <div class="icon">🪵</div>
-                    <div class="label">Wood Art</div>
-                </div>
+                <img src="assets/red-panda.png"
+                     alt="Handmade clay animal figures"
+                     style="width:100%; height:100%; object-fit:fill; display:block;" />
             </div>
             <div class="collage-card card-4">
-                <div class="card-placeholder">
-                    <div class="icon">🗝️</div>
-                    <div class="label">Keychains</div>
-                </div>
+                <img src="assets/miracale-logo.png"
+                     alt="Handmade clay animal figures"
+                     style="width:100%; height:100%; object-fit:fill; display:block;" />
             </div>
 
             <div class="hero-badge">
