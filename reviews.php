@@ -1,3 +1,45 @@
+<?php
+// Load approved reviews from JSON
+$reviewsFile = __DIR__ . '/data/reviews.json';
+$allReviews  = array();
+if (file_exists($reviewsFile)) {
+    $decoded = json_decode(file_get_contents($reviewsFile), true);
+    if (is_array($decoded)) $allReviews = $decoded;
+}
+
+// Only show approved reviews, sorted newest first
+$approved = array();
+foreach ($allReviews as $r) {
+    if (($r['status'] ?? 'pending') === 'approved') $approved[] = $r;
+}
+usort($approved, function($a, $b) { return strcmp($b['date'] ?? '', $a['date'] ?? ''); });
+
+// Find featured review (first featured, or first approved)
+$featured = null;
+$rest     = array();
+foreach ($approved as $r) {
+    if (!empty($r['featured']) && $featured === null) {
+        $featured = $r;
+    } else {
+        $rest[] = $r;
+    }
+}
+if ($featured === null && !empty($approved)) {
+    $featured = array_shift($approved);
+    $rest     = $approved;
+}
+
+// Stats for rating summary
+$total   = count($approved);
+$counts  = array(5 => 0, 4 => 0, 3 => 0, 2 => 0, 1 => 0);
+$starSum = 0;
+foreach ($approved as $r) {
+    $s = (int)($r['stars'] ?? 5);
+    if ($s >= 1 && $s <= 5) { $counts[$s]++; $starSum += $s; }
+}
+$avg = $total > 0 ? round($starSum / $total, 1) : 5.0;
+$avatars = array('🌟', '🌸', '🎨', '✨', '💫', '🌻', '🎭', '🦋');
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -487,41 +529,26 @@
 <!-- RATING SUMMARY -->
 <div class="rating-summary reveal">
   <div class="rating-big">
-    <div class="rating-big-number">5.0</div>
+    <div class="rating-big-number"><?= number_format($avg, 1) ?></div>
     <div class="rating-big-stars">★★★★★</div>
     <div class="rating-big-label">Average Rating</div>
   </div>
   <div class="rating-divider"></div>
   <div class="rating-bars">
+    <?php foreach (array(5, 4, 3, 2, 1) as $star):
+      $count = $counts[$star];
+      $pct   = $total > 0 ? round(($count / $total) * 100) : 0;
+    ?>
     <div class="rating-bar-row">
-      <span class="rating-bar-label">5 ★</span>
-      <div class="rating-bar-track"><div class="rating-bar-fill" style="width:100%"></div></div>
-      <span class="rating-bar-count">2</span>
+      <span class="rating-bar-label"><?= $star ?> ★</span>
+      <div class="rating-bar-track"><div class="rating-bar-fill" style="width:<?= $pct ?>%"></div></div>
+      <span class="rating-bar-count"><?= $count ?></span>
     </div>
-    <div class="rating-bar-row">
-      <span class="rating-bar-label">4 ★</span>
-      <div class="rating-bar-track"><div class="rating-bar-fill" style="width:0%"></div></div>
-      <span class="rating-bar-count">0</span>
-    </div>
-    <div class="rating-bar-row">
-      <span class="rating-bar-label">3 ★</span>
-      <div class="rating-bar-track"><div class="rating-bar-fill" style="width:0%"></div></div>
-      <span class="rating-bar-count">0</span>
-    </div>
-    <div class="rating-bar-row">
-      <span class="rating-bar-label">2 ★</span>
-      <div class="rating-bar-track"><div class="rating-bar-fill" style="width:0%"></div></div>
-      <span class="rating-bar-count">0</span>
-    </div>
-    <div class="rating-bar-row">
-      <span class="rating-bar-label">1 ★</span>
-      <div class="rating-bar-track"><div class="rating-bar-fill" style="width:0%"></div></div>
-      <span class="rating-bar-count">0</span>
-    </div>
+    <?php endforeach; ?>
   </div>
   <div class="rating-divider"></div>
   <div class="rating-big">
-    <div class="rating-big-number">2</div>
+    <div class="rating-big-number"><?= $total ?></div>
     <div class="rating-big-stars" style="font-size:1rem; letter-spacing:1px">verified reviews</div>
     <div class="rating-big-label">and growing</div>
   </div>
@@ -531,44 +558,48 @@
 <section class="reviews-section reveal">
   <div class="reviews-grid">
 
+    <?php if ($featured): ?>
     <!-- Featured review -->
     <div class="review-card featured">
-      <div class="review-stars">★★★★★</div>
-      <p class="review-text">
-        "Super cute and looks AMAZING!"
-      </p>
+      <div class="review-stars"><?= str_repeat('★', (int)($featured['stars'] ?? 5)) ?></div>
+      <p class="review-text">"<?= htmlspecialchars($featured['review']) ?>"</p>
       <div class="review-meta">
         <div class="review-avatar">🌟</div>
         <div>
-          <div class="review-author">Kameron H.</div>
-          <div class="review-product">Verified Purchase</div>
+          <div class="review-author"><?= htmlspecialchars($featured['name']) ?></div>
+          <div class="review-product"><?= !empty($featured['product']) ? htmlspecialchars($featured['product']) : 'Verified Purchase' ?></div>
         </div>
       </div>
     </div>
+    <?php endif; ?>
 
-    <!-- Review 2 -->
+    <?php
+    $shown = 0;
+    foreach ($rest as $r):
+      if ($shown >= 2) break; // show max 2 more alongside featured
+      $avatarIcon = $avatars[($r['id'] ?? $shown) % count($avatars)];
+    ?>
     <div class="review-card">
-      <div class="review-stars">★★★★★</div>
-      <p class="review-text">
-        "Miracale Design's handmade art is simply stunning! Each piece reflects
-        true craftsmanship and creativity. I love supporting this small business
-        from Virginia."
-      </p>
+      <div class="review-stars"><?= str_repeat('★', (int)($r['stars'] ?? 5)) ?></div>
+      <p class="review-text">"<?= htmlspecialchars($r['review']) ?>"</p>
       <div class="review-meta">
-        <div class="review-avatar">🌸</div>
+        <div class="review-avatar"><?= $avatarIcon ?></div>
         <div>
-          <div class="review-author">Emily R.</div>
-          <div class="review-product">Verified Purchase</div>
+          <div class="review-author"><?= htmlspecialchars($r['name']) ?></div>
+          <div class="review-product"><?= !empty($r['product']) ? htmlspecialchars($r['product']) : 'Verified Purchase' ?></div>
         </div>
       </div>
     </div>
+    <?php $shown++; endforeach; ?>
 
-    <!-- Placeholder — encourage more reviews -->
-    <div class="review-card" style="background: var(--parchment); border: 1.5px dashed rgba(28,26,23,0.15); box-shadow:none; align-items:center; justify-content:center; text-align:center; gap:0.6rem;">
+    <?php if ($total < 3): ?>
+    <!-- Placeholder to encourage more reviews -->
+    <div class="review-card" style="background:var(--parchment); border:1.5px dashed rgba(28,26,23,0.15); box-shadow:none; align-items:center; justify-content:center; text-align:center; gap:0.6rem;">
       <div style="font-size:2.5rem">✍️</div>
       <div style="font-family:'Dancing Script',cursive; font-size:1.2rem; color:var(--ink-soft);">Be the next to share</div>
       <div style="font-size:0.82rem; color:var(--ink-soft); line-height:1.5;">Loved your piece? Leave a review below and help others discover Miracale Design.</div>
     </div>
+    <?php endif; ?>
 
   </div>
 </section>

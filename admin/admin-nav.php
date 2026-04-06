@@ -26,6 +26,12 @@ $adminPage = basename($_SERVER['PHP_SELF'], '.php');
         <span class="nav-icon">📅</span> Events
       </a>
     </li>
+    <li>
+      <a href="reviews.php"
+         class="admin-nav-link <?= $adminPage === 'reviews' ? 'active' : '' ?>">
+        <span class="nav-icon">⭐</span> Reviews
+      </a>
+    </li>
     <li class="nav-divider"></li>
     <li>
       <a href="../index.php" target="_blank" class="admin-nav-link">
