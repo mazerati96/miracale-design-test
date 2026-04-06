@@ -116,11 +116,19 @@
         </div>
 
         <div class="gallery-grid">
+
+            <!--
+                HOW IMAGES WORK HERE:
+                Replace the <img src="..."> path to point at any file in assets/ folder.
+                Pattern: src="assets/YOUR-FILENAME.png"
+                The object-fit:cover CSS will crop/fill the container automatically.
+                alt="..." should describe the image for accessibility.
+            -->
+            <!-- Clay Animals → assets/clay-figures.png -->
             <div class="gallery-item">
-                <div class="gallery-img-placeholder">
-                    <div class="gallery-icon">🐾</div>
-                    <div class="gallery-label">Clay Animals</div>
-                </div>
+                <img src="assets/clay-figures.png"
+                     alt="Handmade clay animal figures"
+                     style="width:100%; height:100%; object-fit:cover; display:block;" />
                 <div class="gallery-overlay">
                     <div class="gallery-overlay-text">
                         <h3>Clay Animals</h3>
@@ -129,11 +137,11 @@
                 </div>
             </div>
 
+            <!-- Watercolors → assets/watercolors.png -->
             <div class="gallery-item">
-                <div class="gallery-img-placeholder">
-                    <div class="gallery-icon">🎨</div>
-                    <div class="gallery-label">Watercolors</div>
-                </div>
+                <img src="assets/watercolors.png"
+                     alt="Original watercolor paintings"
+                     style="width:100%; height:100%; object-fit:cover; display:block;" />
                 <div class="gallery-overlay">
                     <div class="gallery-overlay-text">
                         <h3>Watercolor Art</h3>
@@ -142,11 +150,11 @@
                 </div>
             </div>
 
+            <!-- Keychains → assets/keychains.png -->
             <div class="gallery-item">
-                <div class="gallery-img-placeholder">
-                    <div class="gallery-icon">🗝️</div>
-                    <div class="gallery-label">Keychains</div>
-                </div>
+                <img src="assets/keychains.png"
+                     alt="Handmade custom keychains"
+                     style="width:100%; height:100%; object-fit:cover; display:block;" />
                 <div class="gallery-overlay">
                     <div class="gallery-overlay-text">
                         <h3>Custom Keychains</h3>
@@ -155,11 +163,11 @@
                 </div>
             </div>
 
+            <!-- Wood Art → assets/wood-coasters.png -->
             <div class="gallery-item">
-                <div class="gallery-img-placeholder">
-                    <div class="gallery-icon">🪵</div>
-                    <div class="gallery-label">Wood Art</div>
-                </div>
+                <img src="assets/wood-coasters.png"
+                     alt="Handcrafted wood art and coasters"
+                     style="width:100%; height:100%; object-fit:cover; display:block;" />
                 <div class="gallery-overlay">
                     <div class="gallery-overlay-text">
                         <h3>Wood Art</h3>
@@ -167,6 +175,7 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </section>
 
