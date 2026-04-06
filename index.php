@@ -128,7 +128,7 @@
             <div class="gallery-item">
                 <img src="assets/clay-figures.png"
                      alt="Handmade clay animal figures"
-                     style="width:100%; height:100%; object-fit:cover; display:block;" />
+                     style="width:100%; height:100%; object-fit:fill; display:block;" />
                 <div class="gallery-overlay">
                     <div class="gallery-overlay-text">
                         <h3>Clay Animals</h3>
@@ -141,7 +141,7 @@
             <div class="gallery-item">
                 <img src="assets/watercolors.png"
                      alt="Original watercolor paintings"
-                     style="width:100%; height:100%; object-fit:cover; display:block;" />
+                     style="width:100%; height:100%; object-fit:fill; display:block;" />
                 <div class="gallery-overlay">
                     <div class="gallery-overlay-text">
                         <h3>Watercolor Art</h3>
@@ -154,7 +154,7 @@
             <div class="gallery-item">
                 <img src="assets/keychains.png"
                      alt="Handmade custom keychains"
-                     style="width:100%; height:100%; object-fit:cover; display:block;" />
+                     style="width:100%; height:100%; object-fit:fill; display:block;" />
                 <div class="gallery-overlay">
                     <div class="gallery-overlay-text">
                         <h3>Custom Keychains</h3>
@@ -167,7 +167,7 @@
             <div class="gallery-item">
                 <img src="assets/wood-coasters.png"
                      alt="Handcrafted wood art and coasters"
-                     style="width:100%; height:100%; object-fit:cover; display:block;" />
+                     style="width:100%; height:100%; object-fit:fill; display:block;" />
                 <div class="gallery-overlay">
                     <div class="gallery-overlay-text">
                         <h3>Wood Art</h3>
@@ -202,22 +202,22 @@
             <div class="spotlight-card">
                 <img src="assets/bb8-coaster.png"
                      alt="Handcrafted wood art and coasters"
-                     style="width:100%; height:100%; object-fit:cover; display:block;" />
+                     style="width:100%; height:100%; object-fit:fill; display:block;" />
             </div>
             <div class="spotlight-card">
                 <img src="assets/howls-moving-castle.png"
                      alt="Handcrafted wood art and coasters"
-                     style="width:100%; height:100%; object-fit:cover; display:block;" />
+                     style="width:100%; height:100%; object-fit:fill; display:block;" />
             </div>
             <div class="spotlight-card">
                 <img src="assets/raccoon.png"
                      alt="Handcrafted wood art and coasters"
-                     style="width:100%; height:100%; object-fit:cover; display:block;" />
+                     style="width:100%; height:100%; object-fit:fill; display:block;" />
             </div>
             <div class="spotlight-card">
                 <img src="assets/clay-earrings.png"
                      alt="Handcrafted wood art and coasters"
-                     style="width:100%; height:100%; object-fit:cover; display:block;" />
+                     style="width:100%; height:100%; object-fit:fill; display:block;" />
             </div>
         </div>
     </section>
