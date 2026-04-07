@@ -40,19 +40,34 @@ if (file_exists($statusFile)) {
 $toggledTo = $_GET['commissions'] ?? null; // 'open' or 'closed'
 
 // Load data
-$postsPath  = dirname(__DIR__) . '/data/posts.json';
-$eventsPath = dirname(__DIR__) . '/data/events.json';
+$postsPath   = dirname(__DIR__) . '/data/posts.json';
+$eventsPath  = dirname(__DIR__) . '/data/events.json';
+$reviewsPath = dirname(__DIR__) . '/data/reviews.json';
 
-$posts  = array();
-$events = array();
-if (file_exists($postsPath))  { $d = json_decode(file_get_contents($postsPath),  true); if (is_array($d)) $posts  = $d; }
-if (file_exists($eventsPath)) { $d = json_decode(file_get_contents($eventsPath), true); if (is_array($d)) $events = $d; }
+$posts   = array();
+$events  = array();
+$reviews = array();
+if (file_exists($postsPath))   { $d = json_decode(file_get_contents($postsPath),   true); if (is_array($d)) $posts   = $d; }
+if (file_exists($eventsPath))  { $d = json_decode(file_get_contents($eventsPath),  true); if (is_array($d)) $events  = $d; }
+if (file_exists($reviewsPath)) { $d = json_decode(file_get_contents($reviewsPath), true); if (is_array($d)) $reviews = $d; }
 
 $today     = date('Y-m-d');
 $published = 0; $drafts = 0;
 foreach ($posts as $p) { if (!empty($p['published'])) $published++; else $drafts++; }
 $upcoming = 0;
 foreach ($events as $e) { if (!empty($e['date']) && $e['date'] >= $today) $upcoming++; }
+
+// Review stats
+$pendingReviews  = 0;
+$approvedReviews = 0;
+$totalStars      = 0;
+foreach ($reviews as $r) {
+    $status = $r['status'] ?? 'pending';
+    if ($status === 'pending')  $pendingReviews++;
+    if ($status === 'approved') { $approvedReviews++; $totalStars += (int)($r['stars'] ?? 5); }
+}
+$avgRating = $approvedReviews > 0 ? round($totalStars / $approvedReviews, 1) : 0;
+
 $recentPosts = array_slice(array_reverse($posts), 0, 5);
 ?>
 <!DOCTYPE html>
@@ -135,11 +150,18 @@ $recentPosts = array_slice(array_reverse($posts), 0, 5);
         <div class="stat-label">Upcoming Events</div>
         <a href="events.php" class="stat-link">Manage →</a>
       </div>
-      <div class="stat-card">
+      <div class="stat-card" style="<?= $pendingReviews > 0 ? 'border-top: 3px solid #D4A843;' : '' ?>">
         <div class="stat-icon">⭐</div>
-        <div class="stat-number">5.0</div>
-        <div class="stat-label">Review Rating</div>
-        <a href="../reviews.php" target="_blank" class="stat-link">View →</a>
+        <div class="stat-number"><?= $pendingReviews ?></div>
+        <div class="stat-label">
+          Pending Reviews
+          <?php if ($pendingReviews > 0): ?>
+            <span style="display:block; margin-top:0.2rem; font-size:0.68rem; font-weight:700; color:#8a6c1c; text-transform:uppercase; letter-spacing:0.08em;">● Needs attention</span>
+          <?php endif; ?>
+        </div>
+        <a href="reviews.php" class="stat-link">
+          <?= $approvedReviews ?> approved<?= $avgRating > 0 ? ' · ' . $avgRating . ' avg' : '' ?> →
+        </a>
       </div>
     </div>
 
