@@ -352,26 +352,11 @@ if (file_exists($statusFile)) {
         In Google Forms: Send → Embed → copy the iframe src URL.
         It looks like: https://docs.google.com/forms/d/e/XXXXX/viewform?embedded=true
       -->
-      <div class="form-placeholder">
-        <div class="form-placeholder-icon">📋</div>
-        <div class="form-placeholder-title">Commission Request Form</div>
-        <p class="form-placeholder-body">
-          The Google Form will appear here once the embed link is added.
-          To set it up: open your Google Form → click Send → click the
-          embed icon → copy the URL from the iframe src and paste it below in the code.
-        </p>
-        <a href="contact.php" class="btn-primary">
-          Contact us directly in the meantime
-        </a>
-      </div>
+      
 
-      <!-- Uncomment and add your Google Form URL when ready: -->
-      <!--
-      <iframe
-        src="YOUR_GOOGLE_FORM_EMBED_URL_HERE"
-        title="Commission Request Form">
-      </iframe>
-      -->
+      <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSehZSCEDirLtcyCk_KAVVfk_0v8tciq-K5rGT_BMLKQZN4H0w/viewform?embedded=true" width="640" height="2438" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+    
+      
     </div>
   <?php endif; ?>
 
