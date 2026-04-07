@@ -402,18 +402,21 @@
     nav.classList.toggle('scrolled', window.scrollY > 20);
   }, { passive: true });
 
-  // ── Dropdown toggle (click) ──
+  // ── Dropdown toggle ──
   var dropdowns = document.querySelectorAll('.nav-dropdown-item');
+
+  function closeAll() {
+    dropdowns.forEach(function (d) {
+      d.classList.remove('open');
+      d.querySelector('.nav-dropdown-toggle').setAttribute('aria-expanded', 'false');
+    });
+  }
+
   dropdowns.forEach(function (item) {
     var btn = item.querySelector('.nav-dropdown-toggle');
-    btn.addEventListener('click', function (e) {
-      e.stopPropagation();
+    btn.addEventListener('click', function () {
       var isOpen = item.classList.contains('open');
-      // Close all first
-      dropdowns.forEach(function (d) {
-        d.classList.remove('open');
-        d.querySelector('.nav-dropdown-toggle').setAttribute('aria-expanded', 'false');
-      });
+      closeAll();
       if (!isOpen) {
         item.classList.add('open');
         btn.setAttribute('aria-expanded', 'true');
@@ -421,12 +424,11 @@
     });
   });
 
-  // Close dropdowns when clicking outside
-  document.addEventListener('click', function () {
-    dropdowns.forEach(function (d) {
-      d.classList.remove('open');
-      d.querySelector('.nav-dropdown-toggle').setAttribute('aria-expanded', 'false');
-    });
+  // Close when clicking outside — use mousedown so it doesn't race with button click
+  document.addEventListener('mousedown', function (e) {
+    if (!e.target.closest('.nav-dropdown-item')) {
+      closeAll();
+    }
   });
 
   // ── Mobile drawer ──
