@@ -424,11 +424,11 @@
     });
   });
 
-  // Close when clicking outside — use mousedown so it doesn't race with button click
+  // Close when clicking outside.
+  // If the click is on a toggle button, skip — the button's click handler manages open/close.
   document.addEventListener('mousedown', function (e) {
-    if (!e.target.closest('.nav-dropdown-item')) {
-      closeAll();
-    }
+    if (e.target.closest('.nav-dropdown-toggle')) return;
+    if (!e.target.closest('.nav-dropdown-item')) closeAll();
   });
 
   // ── Mobile drawer ──
