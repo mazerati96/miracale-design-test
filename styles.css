@@ -46,11 +46,14 @@ body {
     display: grid;
     grid-template-columns: 1fr 1fr;
     align-items: center;
-    padding: 7rem 3rem 4rem;
-    gap: 3rem;
+    padding: 7rem clamp(3rem, 8vw, 10rem) 4rem;
+    gap: clamp(2rem, 4vw, 5rem);
     position: relative;
     overflow-x: hidden;
     overflow-y: visible;
+    max-width: 1600px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .hero-blob {
@@ -126,7 +129,7 @@ body {
 
 .hero-title {
     font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(3.2rem, 5.5vw, 5.5rem);
+    font-size: clamp(3.2rem, 4vw, 5.5rem);
     font-weight: 300;
     line-height: 1.08;
     color: var(--ink);
@@ -209,7 +212,7 @@ body {
 .hero-collage {
     position: relative;
     z-index: 2;
-    height: 580px;
+    height: clamp(480px, 50vw, 640px);
     animation: fadeUp 1s 0.2s ease both;
 }
 
@@ -233,8 +236,8 @@ body {
     }
 
 .card-1 {
-    width: 260px;
-    height: 340px;
+    width: clamp(200px, 18vw, 280px);
+    height: clamp(260px, 24vw, 360px);
     top: 20px;
     left: 20px;
     transform: rotate(-3deg);
@@ -242,8 +245,8 @@ body {
 }
 
 .card-2 {
-    width: 200px;
-    height: 260px;
+    width: clamp(160px, 14vw, 220px);
+    height: clamp(200px, 18vw, 280px);
     top: 0;
     right: 30px;
     transform: rotate(2.5deg);
@@ -251,8 +254,8 @@ body {
 }
 
 .card-3 {
-    width: 220px;
-    height: 200px;
+    width: clamp(170px, 15vw, 240px);
+    height: clamp(160px, 14vw, 220px);
     bottom: 30px;
     left: 120px;
     transform: rotate(-1.5deg);
@@ -260,8 +263,8 @@ body {
 }
 
 .card-4 {
-    width: 160px;
-    height: 160px;
+    width: clamp(130px, 11vw, 175px);
+    height: clamp(130px, 11vw, 175px);
     bottom: 60px;
     right: 40px;
     transform: rotate(3.5deg);
@@ -941,7 +944,43 @@ footer {
     }
 }
 
-/* ── FOOTER CONTACT INFO ── */
+/* ── LARGE SCREENS (1440px+) ── */
+@media (min-width: 1440px) {
+    .hero {
+        /* Already capped at 1600px max-width — just ensure vertical padding scales nicely */
+        padding-top: 8rem;
+        padding-bottom: 5rem;
+        min-height: 90vh; /* prevent hero from being overly tall on ultrawide monitors */
+    }
+
+    /* Cap other full-width sections so they don't stretch uncomfortably */
+    .gallery-section,
+    .spotlight,
+    .testimonial-section,
+    .marquee-strip {
+        max-width: 100%; /* these are full-bleed by design, keep as-is */
+    }
+
+    .contact-strip {
+        max-width: 1400px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    /* Give sections generous but bounded side padding */
+    .gallery-section {
+        padding-left: clamp(3rem, 8vw, 10rem);
+        padding-right: clamp(3rem, 8vw, 10rem);
+    }
+}
+
+/* ── ULTRAWIDE (1920px+) ── */
+@media (min-width: 1920px) {
+    .hero {
+        min-height: 80vh;
+    }
+}
+
 .footer-contact {
     display: flex;
     flex-direction: column;
