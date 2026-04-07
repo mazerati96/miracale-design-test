@@ -1,3 +1,14 @@
+<?php
+// Read commission status from data file
+$statusFile      = __DIR__ . '/data/commissions.json';
+$commissionsOpen = true; // default to open
+if (file_exists($statusFile)) {
+    $decoded = json_decode(file_get_contents($statusFile), true);
+    if (is_array($decoded) && isset($decoded['open'])) {
+        $commissionsOpen = (bool)$decoded['open'];
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -85,9 +96,7 @@
     }
 
     /* ── HOW IT WORKS ── */
-    .how-section {
-      padding: 4rem 3rem;
-    }
+    .how-section { padding: 4rem 3rem; }
     .how-header { text-align: center; margin-bottom: 3rem; }
     .how-eyebrow {
       font-size: 0.75rem; font-weight: 600; letter-spacing: 0.2em;
@@ -111,18 +120,14 @@
       height: 1.5px;
       background: linear-gradient(to right, var(--parchment), var(--terra), var(--parchment));
     }
-    .how-step {
-      text-align: center;
-      padding: 1.5rem 1rem;
-    }
+    .how-step { text-align: center; padding: 1.5rem 1rem; }
     .how-step-num {
       width: 44px; height: 44px;
       border-radius: 50%;
       background: var(--green);
       color: var(--white);
       font-family: 'Cormorant Garamond', serif;
-      font-size: 1.3rem;
-      font-weight: 400;
+      font-size: 1.3rem; font-weight: 400;
       display: flex; align-items: center; justify-content: center;
       margin: 0 auto 1rem;
       position: relative; z-index: 1;
@@ -132,18 +137,11 @@
       font-family: 'Cormorant Garamond', serif;
       font-size: 1.1rem; font-weight: 500; color: var(--ink); margin-bottom: 0.4rem;
     }
-    .how-step-desc {
-      font-size: 0.82rem; color: var(--ink-soft); line-height: 1.6;
-    }
+    .how-step-desc { font-size: 0.82rem; color: var(--ink-soft); line-height: 1.6; }
 
     /* ── TOS ── */
-    .tos-section {
-      background: var(--parchment);
-      padding: 5rem 3rem;
-    }
-    .tos-inner {
-      max-width: 760px; margin: 0 auto;
-    }
+    .tos-section { background: var(--parchment); padding: 5rem 3rem; }
+    .tos-inner { max-width: 760px; margin: 0 auto; }
     .tos-eyebrow {
       font-size: 0.75rem; font-weight: 600; letter-spacing: 0.2em;
       text-transform: uppercase; color: var(--terra); margin-bottom: 0.8rem;
@@ -156,28 +154,21 @@
     .tos-title em { font-style: italic; color: var(--green); }
     .tos-block {
       background: var(--white);
-      border-radius: 16px;
-      padding: 2rem 2.2rem;
-      margin-bottom: 1rem;
-      border-left: 3px solid var(--terra);
+      border-radius: 16px; padding: 2rem 2.2rem;
+      margin-bottom: 1rem; border-left: 3px solid var(--terra);
     }
     .tos-block-title {
       font-family: 'Cormorant Garamond', serif;
       font-size: 1.15rem; font-weight: 600; color: var(--ink); margin-bottom: 0.5rem;
     }
-    .tos-block-body {
-      font-size: 0.88rem; color: var(--ink-soft); line-height: 1.75;
-    }
+    .tos-block-body { font-size: 0.88rem; color: var(--ink-soft); line-height: 1.75; }
     .tos-note {
-      margin-top: 1.5rem;
-      font-size: 0.82rem; color: var(--ink-soft);
+      margin-top: 1.5rem; font-size: 0.82rem; color: var(--ink-soft);
       font-style: italic; text-align: center;
     }
 
-    /* ── GOOGLE FORM EMBED ── */
-    .form-section {
-      padding: 5rem 3rem 6rem;
-    }
+    /* ── FORM ── */
+    .form-section { padding: 5rem 3rem 6rem; }
     .form-section-header { text-align: center; margin-bottom: 3rem; }
     .form-section-eyebrow {
       font-size: 0.75rem; font-weight: 600; letter-spacing: 0.2em;
@@ -188,25 +179,16 @@
       font-size: clamp(2rem, 3vw, 2.8rem); font-weight: 400; color: var(--ink);
     }
     .form-section-title em { font-style: italic; color: var(--green); }
-    .form-section-sub {
-      font-size: 0.9rem; color: var(--ink-soft); margin-top: 0.5rem;
-    }
+    .form-section-sub { font-size: 0.9rem; color: var(--ink-soft); margin-top: 0.5rem; }
     .google-form-wrap {
       max-width: 760px; margin: 0 auto;
-      background: var(--white);
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 8px 40px rgba(28,26,23,0.08);
+      background: var(--white); border-radius: 20px;
+      overflow: hidden; box-shadow: 0 8px 40px rgba(28,26,23,0.08);
       border: 1px solid rgba(28,26,23,0.07);
     }
-    .google-form-wrap iframe {
-      width: 100%; border: none; display: block;
-      min-height: 900px;
-    }
-    /* Placeholder shown until real Google Form URL is added */
+    .google-form-wrap iframe { width: 100%; border: none; display: block; min-height: 900px; }
     .form-placeholder {
-      padding: 4rem 2rem;
-      text-align: center;
+      padding: 4rem 2rem; text-align: center;
       background: linear-gradient(135deg, var(--parchment), #f0dfc0);
     }
     .form-placeholder-icon { font-size: 3rem; margin-bottom: 1rem; }
@@ -217,6 +199,23 @@
     .form-placeholder-body {
       font-size: 0.88rem; color: var(--ink-soft); line-height: 1.7;
       max-width: 400px; margin: 0 auto 1.5rem;
+    }
+
+    /* Closed state — dims the form section */
+    .commissions-closed-notice {
+      max-width: 760px; margin: 0 auto;
+      padding: 3rem 2rem; text-align: center;
+      background: rgba(201,104,58,0.07);
+      border: 1.5px solid rgba(201,104,58,0.2);
+      border-radius: 20px;
+    }
+    .commissions-closed-notice-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+    .commissions-closed-notice-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem; font-weight: 400; color: var(--ink); margin-bottom: 0.5rem;
+    }
+    .commissions-closed-notice-body {
+      font-size: 0.9rem; color: var(--ink-soft); line-height: 1.7;
     }
 
     @media (max-width: 900px) {
@@ -246,10 +245,14 @@
   </p>
 </section>
 
-<!-- STATUS BANNER — change class to "closed" and update text when commissions close -->
-<div class="status-banner open reveal">
+<!-- STATUS BANNER — class and text driven by commissions.json -->
+<div class="status-banner <?= $commissionsOpen ? 'open' : 'closed' ?> reveal">
   <div class="status-dot"></div>
-  Commissions are currently <strong>&nbsp;open</strong> — submissions are being accepted!
+  <?php if ($commissionsOpen): ?>
+    Commissions are currently <strong>&nbsp;open</strong> — submissions are being accepted!
+  <?php else: ?>
+    Commissions are currently <strong>&nbsp;closed</strong> — check back soon.
+  <?php endif; ?>
 </div>
 
 <!-- HOW IT WORKS -->
@@ -290,56 +293,27 @@
 
     <div class="tos-block">
       <div class="tos-block-title">💰 Pricing &amp; Deposits</div>
-      <p class="tos-block-body">
-        All commissions are priced individually based on size, complexity, and materials.
-        A 50% non-refundable deposit is required before work begins. The remaining balance
-        is due upon completion before shipping.
-      </p>
+      <p class="tos-block-body">All commissions are priced individually based on size, complexity, and materials. A 50% non-refundable deposit is required before work begins. The remaining balance is due upon completion before shipping.</p>
     </div>
-
     <div class="tos-block">
       <div class="tos-block-title">🕐 Turnaround Time</div>
-      <p class="tos-block-body">
-        Most commissions take 2–4 weeks depending on complexity and current queue length.
-        Rush orders may be available for an additional fee — ask when submitting.
-        You'll receive progress updates throughout the process.
-      </p>
+      <p class="tos-block-body">Most commissions take 2–4 weeks depending on complexity and current queue length. Rush orders may be available for an additional fee — ask when submitting. You'll receive progress updates throughout the process.</p>
     </div>
-
     <div class="tos-block">
       <div class="tos-block-title">🔄 Revisions</div>
-      <p class="tos-block-body">
-        One round of minor revisions is included. Major changes to the original concept
-        after work has begun may incur additional charges. Please be as detailed as
-        possible in your initial request.
-      </p>
+      <p class="tos-block-body">One round of minor revisions is included. Major changes to the original concept after work has begun may incur additional charges. Please be as detailed as possible in your initial request.</p>
     </div>
-
     <div class="tos-block">
       <div class="tos-block-title">🚫 Cancellations &amp; Refunds</div>
-      <p class="tos-block-body">
-        Deposits are non-refundable once work has begun. If you need to cancel before
-        work starts, please contact us as soon as possible. Completed pieces are
-        non-refundable but we'll always work to make it right.
-      </p>
+      <p class="tos-block-body">Deposits are non-refundable once work has begun. If you need to cancel before work starts, please contact us as soon as possible. Completed pieces are non-refundable but we'll always work to make it right.</p>
     </div>
-
     <div class="tos-block">
       <div class="tos-block-title">📦 Shipping</div>
-      <p class="tos-block-body">
-        Commissions are shipped via USPS Priority Mail with tracking. Shipping costs
-        are calculated at completion and added to the final invoice. International
-        shipping is available — additional fees apply.
-      </p>
+      <p class="tos-block-body">Commissions are shipped via USPS Priority Mail with tracking. Shipping costs are calculated at completion and added to the final invoice. International shipping is available — additional fees apply.</p>
     </div>
-
     <div class="tos-block">
       <div class="tos-block-title">©️ Ownership &amp; Rights</div>
-      <p class="tos-block-body">
-        Miracale Design retains the right to photograph and share all commissioned
-        work for portfolio and promotional purposes. The physical piece belongs to
-        you; reproduction rights remain with the artist.
-      </p>
+      <p class="tos-block-body">Miracale Design retains the right to photograph and share all commissioned work for portfolio and promotional purposes. The physical piece belongs to you; reproduction rights remain with the artist.</p>
     </div>
 
     <p class="tos-note">
@@ -349,7 +323,7 @@
   </div>
 </section>
 
-<!-- COMMISSION FORM -->
+<!-- COMMISSION FORM — hidden with a notice when commissions are closed -->
 <section class="form-section reveal">
   <div class="form-section-header">
     <div class="form-section-eyebrow">Ready to start?</div>
@@ -357,34 +331,50 @@
     <p class="form-section-sub">Fill out the form below and we'll be in touch within 2–3 business days.</p>
   </div>
 
-  <div class="google-form-wrap">
-    <!--
-      INSTRUCTIONS: Replace the src below with your Google Form embed URL.
-      In Google Forms: Send → Embed → copy the iframe src URL.
-      It looks like: https://docs.google.com/forms/d/e/XXXXX/viewform?embedded=true
-    -->
-    <div class="form-placeholder">
-      <div class="form-placeholder-icon">📋</div>
-      <div class="form-placeholder-title">Commission Request Form</div>
-      <p class="form-placeholder-body">
-        The Google Form will appear here once the embed link is added.
-        To set it up: open your Google Form → click Send → click the
-        embed icon → copy the URL from the iframe src and paste it below
-        in the code.
+  <?php if (!$commissionsOpen): ?>
+    <!-- Shown when commissions are closed -->
+    <div class="commissions-closed-notice">
+      <div class="commissions-closed-notice-icon">🔒</div>
+      <div class="commissions-closed-notice-title">Commissions are closed right now</div>
+      <p class="commissions-closed-notice-body">
+        We're not accepting new requests at this time. Follow us on social media
+        or check back soon — we'll update this page as soon as we reopen.<br><br>
+        In the meantime, <a href="contact.php" style="color:var(--terra)">send us a message</a>
+        and we'll let you know when spots open up.
       </p>
-      <a href="contact.php" class="btn-primary">
-        Contact us directly in the meantime
-      </a>
     </div>
 
-    <!-- Uncomment and add your Google Form URL when ready: -->
-    <!--
-    <iframe
-      src="YOUR_GOOGLE_FORM_EMBED_URL_HERE"
-      title="Commission Request Form">
-    </iframe>
-    -->
-  </div>
+  <?php else: ?>
+    <!-- Shown when commissions are open -->
+    <div class="google-form-wrap">
+      <!--
+        INSTRUCTIONS: Replace the src below with your Google Form embed URL.
+        In Google Forms: Send → Embed → copy the iframe src URL.
+        It looks like: https://docs.google.com/forms/d/e/XXXXX/viewform?embedded=true
+      -->
+      <div class="form-placeholder">
+        <div class="form-placeholder-icon">📋</div>
+        <div class="form-placeholder-title">Commission Request Form</div>
+        <p class="form-placeholder-body">
+          The Google Form will appear here once the embed link is added.
+          To set it up: open your Google Form → click Send → click the
+          embed icon → copy the URL from the iframe src and paste it below in the code.
+        </p>
+        <a href="contact.php" class="btn-primary">
+          Contact us directly in the meantime
+        </a>
+      </div>
+
+      <!-- Uncomment and add your Google Form URL when ready: -->
+      <!--
+      <iframe
+        src="YOUR_GOOGLE_FORM_EMBED_URL_HERE"
+        title="Commission Request Form">
+      </iframe>
+      -->
+    </div>
+  <?php endif; ?>
+
 </section>
 
 <?php include 'includes/footer.php'; ?>

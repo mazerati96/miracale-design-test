@@ -26,6 +26,19 @@ if (!$loggedIn) {
     exit;
 }
 
+// Load commission status
+$statusFile      = dirname(__DIR__) . '/data/commissions.json';
+$commissionsOpen = true; // default to open
+if (file_exists($statusFile)) {
+    $decoded = json_decode(file_get_contents($statusFile), true);
+    if (is_array($decoded) && isset($decoded['open'])) {
+        $commissionsOpen = (bool)$decoded['open'];
+    }
+}
+
+// Flash message from toggle redirect
+$toggledTo = $_GET['commissions'] ?? null; // 'open' or 'closed'
+
 // Load data
 $postsPath  = dirname(__DIR__) . '/data/posts.json';
 $eventsPath = dirname(__DIR__) . '/data/events.json';
@@ -53,6 +66,27 @@ $recentPosts = array_slice(array_reverse($posts), 0, 5);
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Nunito:wght@300;400;500;600&family=Dancing+Script:wght@500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../styles.css" />
   <link rel="stylesheet" href="admin.css" />
+  <style>
+    .commission-card-open   { border-top: 3px solid #2D4A3E !important; }
+    .commission-card-closed { border-top: 3px solid #C9683A !important; }
+    .commission-status-pill {
+      display: inline-block;
+      font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 0.2rem 0.55rem; border-radius: 6px;
+      margin-top: 0.3rem;
+    }
+    .pill-open   { background: rgba(45,74,62,0.12);  color: #2D4A3E; }
+    .pill-closed { background: rgba(201,104,58,0.12); color: #C9683A; }
+    .flash-notice {
+      margin: 0 0 1.5rem;
+      padding: 0.75rem 1.1rem;
+      border-radius: 10px;
+      font-size: 0.85rem; font-weight: 600;
+    }
+    .flash-open   { background: rgba(45,74,62,0.1);  color: #2D4A3E; border: 1.5px solid rgba(45,74,62,0.2); }
+    .flash-closed { background: rgba(201,104,58,0.1); color: #C9683A; border: 1.5px solid rgba(201,104,58,0.2); }
+  </style>
 </head>
 <body class="admin-body">
 
@@ -75,6 +109,12 @@ $recentPosts = array_slice(array_reverse($posts), 0, 5);
       </div>
       <a href="../index.php" target="_blank" class="admin-btn admin-btn-ghost">View Site ↗</a>
     </div>
+
+    <?php if ($toggledTo === 'open'): ?>
+      <div class="flash-notice flash-open">✅ Commissions are now <strong>open</strong> — the site has been updated.</div>
+    <?php elseif ($toggledTo === 'closed'): ?>
+      <div class="flash-notice flash-closed">🔒 Commissions are now <strong>closed</strong> — the site has been updated.</div>
+    <?php endif; ?>
 
     <div class="stat-grid">
       <div class="stat-card">
@@ -116,11 +156,23 @@ $recentPosts = array_slice(array_reverse($posts), 0, 5);
           <div class="quick-action-label">Add Event</div>
           <div class="quick-action-desc">Add an upcoming craft fair</div>
         </a>
-        <a href="../commissions.php" target="_blank" class="quick-action-card">
-          <div class="quick-action-icon">🎨</div>
-          <div class="quick-action-label">Commission Status</div>
-          <div class="quick-action-desc">Toggle open/closed</div>
-        </a>
+
+        <!-- Commission toggle — styled as a card but submits a POST form -->
+        <form method="POST" action="toggle-commissions.php" style="display:contents">
+          <button type="submit"
+                  class="quick-action-card <?= $commissionsOpen ? 'commission-card-open' : 'commission-card-closed' ?>"
+                  style="background:none; border:none; cursor:pointer; text-align:left; font-family:inherit;">
+            <div class="quick-action-icon"><?= $commissionsOpen ? '🟢' : '🔴' ?></div>
+            <div class="quick-action-label">Commission Status</div>
+            <div class="quick-action-desc">
+              Click to <?= $commissionsOpen ? 'close' : 'open' ?> commissions
+            </div>
+            <span class="commission-status-pill <?= $commissionsOpen ? 'pill-open' : 'pill-closed' ?>">
+              Currently <?= $commissionsOpen ? 'Open' : 'Closed' ?>
+            </span>
+          </button>
+        </form>
+
         <a href="https://dashboard.stripe.com/products" target="_blank"
            rel="noopener" class="quick-action-card">
           <div class="quick-action-icon">🛍️</div>
