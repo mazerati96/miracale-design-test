@@ -29,13 +29,16 @@
   /* ── DESKTOP LINKS ── */
   .nav-links {
     display: flex;
-    gap: 1.6rem;
+    gap: 0.3rem;
     list-style: none;
     align-items: center;
     flex: 1;
     justify-content: center;
   }
-  .nav-links a {
+
+  /* Top-level link/button shared styles */
+  .nav-links > li > a,
+  .nav-links > li > .nav-dropdown-toggle {
     font-family: 'Nunito', sans-serif;
     font-size: 0.75rem;
     font-weight: 600;
@@ -46,19 +49,95 @@
     position: relative;
     transition: color 0.2s;
     white-space: nowrap;
+    padding: 0.4rem 0.6rem;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: none;
+    border: none;
+    cursor: pointer;
   }
-  .nav-links a::after {
+  .nav-links > li > a::after,
+  .nav-links > li > .nav-dropdown-toggle::after {
     content: '';
     position: absolute;
-    bottom: -3px; left: 0;
-    width: 0; height: 1.5px;
+    bottom: -1px; left: 0.6rem; right: 0.6rem;
+    height: 1.5px;
     background: var(--terra, #C9683A);
-    transition: width 0.3s ease;
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+    transform-origin: left;
   }
-  .nav-links a:hover { color: var(--terra, #C9683A); }
-  .nav-links a:hover::after { width: 100%; }
-  .nav-links a.active { color: var(--terra, #C9683A); }
-  .nav-links a.active::after { width: 100%; }
+  .nav-links > li > a:hover,
+  .nav-links > li > .nav-dropdown-toggle:hover { color: var(--terra, #C9683A); }
+  .nav-links > li > a:hover::after,
+  .nav-links > li > .nav-dropdown-toggle:hover::after { transform: scaleX(1); }
+  .nav-links > li > a.active,
+  .nav-links > li > .nav-dropdown-toggle.active { color: var(--terra, #C9683A); }
+  .nav-links > li > a.active::after,
+  .nav-links > li > .nav-dropdown-toggle.active::after { transform: scaleX(1); }
+
+  /* Caret for dropdown toggles */
+  .nav-caret {
+    font-size: 0.55rem;
+    opacity: 0.5;
+    transition: transform 0.25s;
+    display: inline-block;
+  }
+  .nav-dropdown-item.open .nav-caret { transform: rotate(180deg); }
+
+  /* ── DROPDOWN WRAPPER ── */
+  .nav-dropdown-item {
+    position: relative;
+  }
+  .nav-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--white, #FFFDF8);
+    border: 1px solid rgba(28,26,23,0.08);
+    border-radius: 14px;
+    box-shadow: 0 12px 40px rgba(28,26,23,0.12);
+    padding: 0.5rem;
+    min-width: 180px;
+    list-style: none;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-50%) translateY(-6px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 200;
+  }
+  .nav-dropdown-item.open .nav-dropdown,
+  .nav-dropdown-item:focus-within .nav-dropdown {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateX(-50%) translateY(0);
+  }
+  .nav-dropdown li a {
+    display: block;
+    padding: 0.55rem 0.9rem;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-soft, #4A4540);
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
+  }
+  .nav-dropdown li a:hover { background: rgba(201,104,58,0.08); color: var(--terra, #C9683A); }
+  .nav-dropdown li a.active { color: var(--terra, #C9683A); background: rgba(201,104,58,0.06); }
+
+  /* Small divider between dropdown items if desired */
+  .nav-dropdown-divider {
+    height: 1px;
+    background: rgba(28,26,23,0.06);
+    margin: 0.3rem 0.5rem;
+  }
 
   /* ── SOCIAL ICONS (desktop) ── */
   .nav-socials {
@@ -77,10 +156,7 @@
     transition: background 0.2s, color 0.2s;
     font-size: 0.9rem;
   }
-  .nav-social-btn:hover {
-    background: var(--terra, #C9683A);
-    color: white;
-  }
+  .nav-social-btn:hover { background: var(--terra, #C9683A); color: white; }
 
   /* ── HAMBURGER ── */
   .nav-hamburger {
@@ -118,7 +194,6 @@
     overflow-y: auto;
   }
   .nav-drawer.open { right: 0; }
-
   .nav-drawer-header {
     display: flex;
     justify-content: space-between;
@@ -145,13 +220,7 @@
   .nav-drawer-close:hover { background: rgba(28,26,23,0.06); }
 
   /* Drawer nav links */
-  .nav-drawer-links {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    flex: 1;
-  }
+  .nav-drawer-links { list-style: none; display: flex; flex-direction: column; gap: 0; flex: 1; }
   .nav-drawer-links li a {
     display: flex;
     align-items: center;
@@ -168,47 +237,41 @@
   .nav-drawer-links li a:hover,
   .nav-drawer-links li a.active { color: var(--terra, #C9683A); }
   .nav-drawer-links li a .drawer-arrow {
-    font-size: 0.9rem;
-    opacity: 0.3;
+    font-size: 0.9rem; opacity: 0.3;
     transition: opacity 0.2s, transform 0.2s;
   }
-  .nav-drawer-links li a:hover .drawer-arrow {
-    opacity: 0.8;
-    transform: translateX(3px);
+  .nav-drawer-links li a:hover .drawer-arrow { opacity: 0.8; transform: translateX(3px); }
+
+  /* Drawer group label */
+  .nav-drawer-group-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-soft, #4A4540);
+    opacity: 0.4;
+    padding: 1.2rem 0 0.3rem;
   }
 
   /* Drawer social section */
   .nav-drawer-social-title {
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--ink-soft, #4A4540);
-    opacity: 0.5;
-    margin: 1.5rem 0 0.8rem;
+    font-size: 0.7rem; font-weight: 600; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--ink-soft, #4A4540);
+    opacity: 0.5; margin: 1.5rem 0 0.8rem;
   }
-  .nav-drawer-socials {
-    display: flex;
-    gap: 0.7rem;
-  }
+  .nav-drawer-socials { display: flex; gap: 0.7rem; }
   .nav-drawer-social-btn {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    display: flex; align-items: center; gap: 0.5rem;
     padding: 0.55rem 1rem;
     background: rgba(28,26,23,0.04);
     border-radius: 10px;
     text-decoration: none;
     font-family: 'Nunito', sans-serif;
-    font-size: 0.78rem;
-    font-weight: 600;
+    font-size: 0.78rem; font-weight: 600;
     color: var(--ink-soft, #4A4540);
     transition: background 0.2s, color 0.2s;
   }
-  .nav-drawer-social-btn:hover {
-    background: rgba(201,104,58,0.1);
-    color: var(--terra, #C9683A);
-  }
+  .nav-drawer-social-btn:hover { background: rgba(201,104,58,0.1); color: var(--terra, #C9683A); }
 
   /* ── OVERLAY ── */
   .nav-overlay {
@@ -221,10 +284,6 @@
   .nav-overlay.open { opacity: 1; pointer-events: all; }
 
   /* ── RESPONSIVE ── */
-  @media (max-width: 1024px) {
-    .nav-links { gap: 1.2rem; }
-    .nav-links a { font-size: 0.7rem; }
-  }
   @media (max-width: 860px) {
     nav { padding: 1rem 1.5rem; }
     .nav-links { display: none; }
@@ -237,17 +296,48 @@
   <a href="index.php" class="nav-logo">Miracale Design</a>
 
   <ul class="nav-links">
-    <li><a href="index.php"       class="<?= $current === 'index'       ? 'active' : '' ?>">Home</a></li>
-    <li><a href="shop.php"        class="<?= $current === 'shop'        ? 'active' : '' ?>">Shop</a></li>
-     <li><a href="commissions.php" class="<?= $current === 'commissions' ? 'active' : '' ?>">Commissions</a></li>
-    
-    <li><a href="blog.php"        class="<?= $current === 'blog'        ? 'active' : '' ?>">Blog</a></li>
-   
-    <li><a href="about.php"       class="<?= $current === 'about'       ? 'active' : '' ?>">About</a></li>
-    <li><a href="portfolio.php"   class="<?= $current === 'portfolio'   ? 'active' : '' ?>">Portfolio</a></li>
-    <li><a href="reviews.php"     class="<?= $current === 'reviews'     ? 'active' : '' ?>">Reviews</a></li>
-    <li><a href="contact.php"     class="<?= $current === 'contact'     ? 'active' : '' ?>">Contact</a></li>
-    <li><a href="login.php"       class="<?= $current === 'login'       ? 'active' : '' ?>">Artist Login</a></li>
+
+    <!-- 1. Home (standalone) -->
+    <li>
+      <a href="index.php" class="<?= $current === 'index' ? 'active' : '' ?>">Home</a>
+    </li>
+
+    <!-- 2. Shop dropdown -->
+    <li class="nav-dropdown-item" id="ddShop">
+      <button class="nav-dropdown-toggle <?= in_array($current, ['shop','commissions']) ? 'active' : '' ?>"
+              aria-haspopup="true" aria-expanded="false">
+        Shop <span class="nav-caret">▼</span>
+      </button>
+      <ul class="nav-dropdown" role="menu">
+        <li><a href="shop.php"        class="<?= $current === 'shop'        ? 'active' : '' ?>">Shop</a></li>
+        <li><a href="commissions.php" class="<?= $current === 'commissions' ? 'active' : '' ?>">Commissions</a></li>
+      </ul>
+    </li>
+
+    <!-- 3. Discover dropdown (About / Portfolio / Reviews / Contact) -->
+    <li class="nav-dropdown-item" id="ddDiscover">
+      <button class="nav-dropdown-toggle <?= in_array($current, ['about','portfolio','reviews','contact']) ? 'active' : '' ?>"
+              aria-haspopup="true" aria-expanded="false">
+        Discover <span class="nav-caret">▼</span>
+      </button>
+      <ul class="nav-dropdown" role="menu">
+        <li><a href="about.php"     class="<?= $current === 'about'     ? 'active' : '' ?>">About</a></li>
+        <li><a href="portfolio.php" class="<?= $current === 'portfolio' ? 'active' : '' ?>">Portfolio</a></li>
+        <li><a href="reviews.php"   class="<?= $current === 'reviews'   ? 'active' : '' ?>">Reviews</a></li>
+        <div class="nav-dropdown-divider"></div>
+        <li><a href="contact.php"   class="<?= $current === 'contact'   ? 'active' : '' ?>">Contact</a></li>
+      </ul>
+    </li>
+
+    <!-- 4. Blog (standalone) -->
+    <li>
+      <a href="blog.php" class="<?= $current === 'blog' ? 'active' : '' ?>">Blog</a>
+    </li>
+
+    <!-- 5. Admin Login (standalone) -->
+    <li>
+      <a href="login.php" class="<?= $current === 'login' ? 'active' : '' ?>">Admin Login</a>
+    </li>
 
   </ul>
 
@@ -277,28 +367,87 @@
   </div>
 
   <ul class="nav-drawer-links">
-    <li><a href="index.php"       class="<?= $current === 'index'       ? 'active' : '' ?>">Home              <span class="drawer-arrow">→</span></a></li>
-    <li><a href="shop.php"        class="<?= $current === 'shop'        ? 'active' : '' ?>">Shop              <span class="drawer-arrow">→</span></a></li>
-    <li><a href="portfolio.php"   class="<?= $current === 'portfolio'   ? 'active' : '' ?>">Portfolio         <span class="drawer-arrow">→</span></a></li>
-    <li><a href="blog.php"        class="<?= $current === 'blog'        ? 'active' : '' ?>">Blog              <span class="drawer-arrow">→</span></a></li>
-    <li><a href="commissions.php" class="<?= $current === 'commissions' ? 'active' : '' ?>">Commissions       <span class="drawer-arrow">→</span></a></li>
-    <li><a href="about.php"       class="<?= $current === 'about'       ? 'active' : '' ?>">About             <span class="drawer-arrow">→</span></a></li>
-    <li><a href="reviews.php"     class="<?= $current === 'reviews'     ? 'active' : '' ?>">Reviews           <span class="drawer-arrow">→</span></a></li>
-    <li><a href="contact.php"     class="<?= $current === 'contact'     ? 'active' : '' ?>">Contact           <span class="drawer-arrow">→</span></a></li>
+    <li><a href="index.php" class="<?= $current === 'index' ? 'active' : '' ?>">Home <span class="drawer-arrow">→</span></a></li>
+
+    <div class="nav-drawer-group-label">Shop</div>
+    <li><a href="shop.php"        class="<?= $current === 'shop'        ? 'active' : '' ?>">Shop        <span class="drawer-arrow">→</span></a></li>
+    <li><a href="commissions.php" class="<?= $current === 'commissions' ? 'active' : '' ?>">Commissions <span class="drawer-arrow">→</span></a></li>
+
+    <div class="nav-drawer-group-label">Discover</div>
+    <li><a href="about.php"     class="<?= $current === 'about'     ? 'active' : '' ?>">About     <span class="drawer-arrow">→</span></a></li>
+    <li><a href="portfolio.php" class="<?= $current === 'portfolio' ? 'active' : '' ?>">Portfolio <span class="drawer-arrow">→</span></a></li>
+    <li><a href="reviews.php"   class="<?= $current === 'reviews'   ? 'active' : '' ?>">Reviews   <span class="drawer-arrow">→</span></a></li>
+    <li><a href="contact.php"   class="<?= $current === 'contact'   ? 'active' : '' ?>">Contact   <span class="drawer-arrow">→</span></a></li>
+
+    <div class="nav-drawer-group-label">More</div>
+    <li><a href="blog.php"   class="<?= $current === 'blog'  ? 'active' : '' ?>">Blog         <span class="drawer-arrow">→</span></a></li>
+    <li><a href="login.php"  class="<?= $current === 'login' ? 'active' : '' ?>">Admin Login  <span class="drawer-arrow">→</span></a></li>
   </ul>
 
   <div class="nav-drawer-social-title">Find us online</div>
   <div class="nav-drawer-socials">
-    <a href="#" class="nav-drawer-social-btn" target="_blank" rel="noopener">
-      📘 Facebook
-    </a>
-    <a href="#" class="nav-drawer-social-btn" target="_blank" rel="noopener">
-      📸 Instagram
-    </a>
-    <a href="#" class="nav-drawer-social-btn" target="_blank" rel="noopener">
-      💬 Discord
-    </a>
+    <a href="#" class="nav-drawer-social-btn" target="_blank" rel="noopener">📘 Facebook</a>
+    <a href="#" class="nav-drawer-social-btn" target="_blank" rel="noopener">📸 Instagram</a>
+    <a href="#" class="nav-drawer-social-btn" target="_blank" rel="noopener">💬 Discord</a>
   </div>
 </div>
 
 <div class="nav-overlay" id="navOverlay"></div>
+
+<script>
+(function () {
+  // ── Scroll effect ──
+  var nav = document.getElementById('nav');
+  window.addEventListener('scroll', function () {
+    nav.classList.toggle('scrolled', window.scrollY > 20);
+  }, { passive: true });
+
+  // ── Dropdown toggle (click) ──
+  var dropdowns = document.querySelectorAll('.nav-dropdown-item');
+  dropdowns.forEach(function (item) {
+    var btn = item.querySelector('.nav-dropdown-toggle');
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var isOpen = item.classList.contains('open');
+      // Close all first
+      dropdowns.forEach(function (d) {
+        d.classList.remove('open');
+        d.querySelector('.nav-dropdown-toggle').setAttribute('aria-expanded', 'false');
+      });
+      if (!isOpen) {
+        item.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+
+  // Close dropdowns when clicking outside
+  document.addEventListener('click', function () {
+    dropdowns.forEach(function (d) {
+      d.classList.remove('open');
+      d.querySelector('.nav-dropdown-toggle').setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  // ── Mobile drawer ──
+  var hamburger  = document.getElementById('navHamburger');
+  var drawer     = document.getElementById('navDrawer');
+  var overlay    = document.getElementById('navOverlay');
+  var closeBtn   = document.getElementById('navDrawerClose');
+
+  function openDrawer() {
+    drawer.classList.add('open');
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeDrawer() {
+    drawer.classList.remove('open');
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  hamburger.addEventListener('click', openDrawer);
+  closeBtn.addEventListener('click', closeDrawer);
+  overlay.addEventListener('click', closeDrawer);
+})();
+</script>
