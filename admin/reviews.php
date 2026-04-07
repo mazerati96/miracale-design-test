@@ -1,119 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Reviews — Miracale Design Admin</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Nunito:wght@300;400;500;600&family=Dancing+Script:wght@500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../styles.css" />
-  <link rel="stylesheet" href="admin.css" />
-  <style>
-    .review-cards { display: flex; flex-direction: column; gap: 1rem; }
-    .review-card {
-      background: white;
-      border: 1px solid rgba(28,26,23,0.07);
-      border-radius: 16px;
-      padding: 1.5rem 1.8rem;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 1rem;
-      align-items: start;
-      box-shadow: 0 2px 12px rgba(28,26,23,0.04);
-      position: relative;
-      transition: box-shadow 0.2s;
-    }
-    .review-card:hover { box-shadow: 0 6px 24px rgba(28,26,23,0.09); }
-    .review-card.pending { border-left: 3px solid var(--ochre, #D4A843); }
-    .review-card.approved { border-left: 3px solid var(--green, #2D4A3E); }
-    .review-card.hidden  { border-left: 3px solid rgba(28,26,23,0.2); opacity: 0.65; }
-
-    .review-stars { color: var(--ochre, #D4A843); font-size: 1rem; letter-spacing: 1px; margin-bottom: 0.4rem; }
-    .review-text {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.1rem; font-style: italic;
-      color: var(--ink, #1C1A17); line-height: 1.55;
-      margin-bottom: 0.6rem;
-    }
-    .review-meta { font-size: 0.78rem; color: var(--ink-soft, #4A4540); }
-    .review-meta strong { color: var(--ink, #1C1A17); }
-    .review-featured-badge {
-      display: inline-flex; align-items: center; gap: 0.3rem;
-      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em;
-      text-transform: uppercase;
-      background: rgba(212,168,67,0.15); color: #8a6c1c;
-      padding: 0.15rem 0.55rem; border-radius: 6px;
-      margin-left: 0.5rem;
-    }
-
-    .review-actions {
-      display: flex; flex-direction: column; gap: 0.5rem;
-      flex-shrink: 0; align-items: flex-end;
-    }
-    .action-btn {
-      padding: 0.4rem 0.9rem; border-radius: 8px;
-      font-family: 'Nunito', sans-serif; font-size: 0.75rem;
-      font-weight: 600; border: none; cursor: pointer;
-      white-space: nowrap; transition: all 0.2s;
-      text-align: center; min-width: 100px;
-    }
-    .action-btn.approve  { background: rgba(45,74,62,0.1);  color: var(--green, #2D4A3E); }
-    .action-btn.approve:hover  { background: var(--green, #2D4A3E); color: white; }
-    .action-btn.hide     { background: rgba(28,26,23,0.07); color: var(--ink-soft, #4A4540); }
-    .action-btn.hide:hover     { background: rgba(28,26,23,0.15); }
-    .action-btn.unhide   { background: rgba(28,26,23,0.07); color: var(--ink-soft, #4A4540); }
-    .action-btn.unhide:hover   { background: rgba(28,26,23,0.15); }
-    .action-btn.feature  { background: rgba(212,168,67,0.12); color: #8a6c1c; }
-    .action-btn.feature:hover  { background: rgba(212,168,67,0.25); }
-    .action-btn.unfeature { background: rgba(212,168,67,0.12); color: #8a6c1c; }
-    .action-btn.unfeature:hover { background: rgba(212,168,67,0.25); }
-    .action-btn.delete   { background: rgba(201,104,58,0.08); color: var(--terra, #C9683A); }
-    .action-btn.delete:hover   { background: rgba(201,104,58,0.18); }
-
-    .filter-tabs {
-      display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;
-    }
-    .filter-tab {
-      padding: 0.4rem 1rem; border-radius: 99px;
-      border: 1.5px solid rgba(28,26,23,0.12);
-      background: none; font-family: 'Nunito', sans-serif;
-      font-size: 0.78rem; font-weight: 600; color: var(--ink-soft);
-      cursor: pointer; transition: all 0.2s;
-    }
-    .filter-tab.active { background: var(--green); border-color: var(--green); color: white; }
-    .filter-tab:hover:not(.active) { border-color: var(--terra); color: var(--terra); }
-
-    .summary-bar {
-      display: flex; gap: 1.5rem; margin-bottom: 2rem;
-      flex-wrap: wrap;
-    }
-    .summary-item {
-      background: white; border-radius: 12px;
-      padding: 0.8rem 1.2rem; font-size: 0.82rem;
-      color: var(--ink-soft); border: 1px solid rgba(28,26,23,0.07);
-    }
-    .summary-item strong {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.4rem; font-weight: 400;
-      color: var(--ink); display: block; line-height: 1;
-    }
-  </style>
-</head>
-<body class="admin-body">
-
 <?php
+// ── ALL PHP LOGIC FIRST — before any HTML output ───────────────────────────
 if (session_status() === PHP_SESSION_NONE) session_start();
 
 $configPath = dirname(__DIR__) . '/config/admin.php';
 if (!file_exists($configPath)) die('Config missing.');
 require_once $configPath;
 
-// Auth check
+// Auth check — must happen before any HTML
 if (empty($_SESSION['admin_logged_in']) ||
     $_SESSION['admin_user'] !== ADMIN_USERNAME ||
     $_SESSION['admin_expires'] < time()) {
-    header('Location: /login.php'); exit;
+    header('Location: /login.php');
+    exit;
 }
 
 $reviewsFile = dirname(__DIR__) . '/data/reviews.json';
@@ -159,11 +57,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($pAction === 'feature') {
-        // Only one featured review at a time
         foreach ($reviews as &$r) {
             $r['featured'] = ((int)$r['id'] === $targetId && $r['status'] === 'approved');
         } unset($r);
-        $feedback = 'Review set as featured — it will show highlighted on the reviews page.';
+        $feedback = 'Review set as featured.';
     }
 
     if ($pAction === 'unfeature') {
@@ -189,9 +86,8 @@ usort($reviews, function($a, $b) {
     return strcmp($b['date'] ?? '', $a['date'] ?? '');
 });
 
-// Counts
-$totalCount    = count($reviews);
-$pendingCount  = 0; $approvedCount = 0; $hiddenCount = 0;
+$totalCount = count($reviews);
+$pendingCount = $approvedCount = $hiddenCount = 0;
 foreach ($reviews as $r) {
     $s = $r['status'] ?? 'pending';
     if ($s === 'pending')  $pendingCount++;
@@ -199,7 +95,6 @@ foreach ($reviews as $r) {
     if ($s === 'hidden')   $hiddenCount++;
 }
 
-// Active filter
 $activeFilter = $_GET['filter'] ?? 'all';
 if (!in_array($activeFilter, array('all', 'pending', 'approved', 'hidden'))) {
     $activeFilter = 'all';
@@ -209,7 +104,100 @@ $filtered = $activeFilter === 'all'
     : array_values(array_filter($reviews, function($r) use ($activeFilter) {
         return ($r['status'] ?? 'pending') === $activeFilter;
     }));
+
+// ── HTML OUTPUT STARTS HERE ────────────────────────────────────────────────
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reviews — Miracale Design Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Nunito:wght@300;400;500;600&family=Dancing+Script:wght@500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="admin.css" />
+  <style>
+    .review-cards { display: flex; flex-direction: column; gap: 1rem; }
+    .review-card {
+      background: white;
+      border: 1px solid rgba(28,26,23,0.07);
+      border-radius: 16px;
+      padding: 1.5rem 1.8rem;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1rem;
+      align-items: start;
+      box-shadow: 0 2px 12px rgba(28,26,23,0.04);
+      transition: box-shadow 0.2s;
+    }
+    .review-card:hover { box-shadow: 0 6px 24px rgba(28,26,23,0.09); }
+    .review-card.pending  { border-left: 3px solid var(--ochre, #D4A843); }
+    .review-card.approved { border-left: 3px solid var(--green, #2D4A3E); }
+    .review-card.hidden   { border-left: 3px solid rgba(28,26,23,0.2); opacity: 0.65; }
+    .review-stars { color: var(--ochre, #D4A843); font-size: 1rem; letter-spacing: 1px; margin-bottom: 0.4rem; }
+    .review-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; font-style: italic;
+      color: var(--ink, #1C1A17); line-height: 1.55; margin-bottom: 0.6rem;
+    }
+    .review-meta { font-size: 0.78rem; color: var(--ink-soft, #4A4540); }
+    .review-meta strong { color: var(--ink, #1C1A17); }
+    .review-featured-badge {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: rgba(212,168,67,0.15); color: #8a6c1c;
+      padding: 0.15rem 0.55rem; border-radius: 6px; margin-left: 0.5rem;
+    }
+    .review-actions {
+      display: flex; flex-direction: column; gap: 0.5rem;
+      flex-shrink: 0; align-items: flex-end;
+    }
+    .action-btn {
+      padding: 0.4rem 0.9rem; border-radius: 8px;
+      font-family: 'Nunito', sans-serif; font-size: 0.75rem;
+      font-weight: 600; border: none; cursor: pointer;
+      white-space: nowrap; transition: all 0.2s;
+      text-align: center; min-width: 100px;
+    }
+    .action-btn.approve   { background: rgba(45,74,62,0.1);   color: var(--green, #2D4A3E); }
+    .action-btn.approve:hover   { background: var(--green, #2D4A3E); color: white; }
+    .action-btn.hide      { background: rgba(28,26,23,0.07);  color: var(--ink-soft, #4A4540); }
+    .action-btn.hide:hover      { background: rgba(28,26,23,0.15); }
+    .action-btn.unhide    { background: rgba(28,26,23,0.07);  color: var(--ink-soft, #4A4540); }
+    .action-btn.unhide:hover    { background: rgba(28,26,23,0.15); }
+    .action-btn.feature   { background: rgba(212,168,67,0.12); color: #8a6c1c; }
+    .action-btn.feature:hover   { background: rgba(212,168,67,0.25); }
+    .action-btn.unfeature { background: rgba(212,168,67,0.12); color: #8a6c1c; }
+    .action-btn.unfeature:hover { background: rgba(212,168,67,0.25); }
+    .action-btn.delete    { background: rgba(201,104,58,0.08); color: var(--terra, #C9683A); }
+    .action-btn.delete:hover    { background: rgba(201,104,58,0.18); }
+    .filter-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .filter-tab {
+      padding: 0.4rem 1rem; border-radius: 99px;
+      border: 1.5px solid rgba(28,26,23,0.12);
+      background: none; font-family: 'Nunito', sans-serif;
+      font-size: 0.78rem; font-weight: 600; color: var(--ink-soft);
+      cursor: pointer; transition: all 0.2s;
+    }
+    .filter-tab.active { background: var(--green); border-color: var(--green); color: white; }
+    .filter-tab:hover:not(.active) { border-color: var(--terra); color: var(--terra); }
+    .summary-bar { display: flex; gap: 1.5rem; margin-bottom: 2rem; flex-wrap: wrap; }
+    .summary-item {
+      background: white; border-radius: 12px;
+      padding: 0.8rem 1.2rem; font-size: 0.82rem;
+      color: var(--ink-soft); border: 1px solid rgba(28,26,23,0.07);
+    }
+    .summary-item strong {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem; font-weight: 400;
+      color: var(--ink); display: block; line-height: 1;
+    }
+  </style>
+</head>
+<body class="admin-body">
 
 <?php include 'admin-nav.php'; ?>
 
@@ -228,7 +216,6 @@ $filtered = $activeFilter === 'all'
       <a href="../reviews.php" target="_blank" class="admin-btn admin-btn-ghost">View Page ↗</a>
     </div>
 
-    <!-- Summary -->
     <div class="summary-bar">
       <div class="summary-item"><strong><?= $totalCount ?></strong>Total</div>
       <div class="summary-item"><strong style="color:#8a6c1c"><?= $pendingCount ?></strong>Pending</div>
@@ -236,7 +223,6 @@ $filtered = $activeFilter === 'all'
       <div class="summary-item"><strong><?= $hiddenCount ?></strong>Hidden</div>
     </div>
 
-    <!-- Filter tabs -->
     <div class="filter-tabs">
       <?php foreach (array('all' => 'All', 'pending' => 'Pending', 'approved' => 'Approved', 'hidden' => 'Hidden') as $key => $label): ?>
         <a href="?filter=<?= $key ?>" style="text-decoration:none">
@@ -289,7 +275,6 @@ $filtered = $activeFilter === 'all'
           </div>
         </div>
 
-        <!-- Actions -->
         <div class="review-actions">
           <?php if ($status === 'pending'): ?>
             <form method="POST">
