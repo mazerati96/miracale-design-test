@@ -109,8 +109,7 @@
     transition: opacity 0.2s ease, transform 0.2s ease;
     z-index: 200;
   }
-  .nav-dropdown-item.open .nav-dropdown,
-  .nav-dropdown-item:focus-within .nav-dropdown {
+  .nav-dropdown-item.open .nav-dropdown {
     opacity: 1;
     pointer-events: all;
     transform: translateX(-50%) translateY(0);
