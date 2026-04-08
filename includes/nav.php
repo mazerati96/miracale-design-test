@@ -342,10 +342,10 @@
 
   <!-- Social icons — update hrefs with real URLs -->
   <div class="nav-socials">
-    <a href="#" class="nav-social-btn" aria-label="Facebook" target="_blank" rel="noopener">
+    <a href="https://www.facebook.com/people/Miracale-Design/100087238136791/?mibextid=qi2Omg&rdid=Dg3OgiLvBX9PXyD1&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2FKVkduwbCeaL1WB9t%2F%3Fmibextid%3Dqi2Omg" class="nav-social-btn" aria-label="Facebook" target="_blank" rel="noopener">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
     </a>
-    <a href="#" class="nav-social-btn" aria-label="Instagram" target="_blank" rel="noopener">
+    <a href="https://www.instagram.com/miracaledesign?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" class="nav-social-btn" aria-label="Instagram" target="_blank" rel="noopener">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none"/></svg>
     </a>
     <a href="#" class="nav-social-btn" aria-label="Discord" target="_blank" rel="noopener">
