@@ -11,10 +11,12 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$name    = trim(htmlspecialchars($_POST['name']    ?? ''));
-$product = trim(htmlspecialchars($_POST['product'] ?? ''));
-$review  = trim(htmlspecialchars($_POST['review']  ?? ''));
-$stars   = (int)($_POST['stars'] ?? 0);
+// Store raw text — htmlspecialchars() belongs at display time, NOT here.
+// Escaping on save causes apostrophes/quotes to become &#039; and &quot; in the JSON.
+$name    = trim($_POST['name']    ?? '');
+$product = trim($_POST['product'] ?? '');
+$review  = trim($_POST['review']  ?? '');
+$stars   = (int)($_POST['stars']  ?? 0);
 
 $errors = array();
 if (empty($name))              $errors[] = 'Name is required.';
@@ -76,7 +78,7 @@ mail($artist_email, $subject, $body, $headers);
 if ($saved !== false) {
     echo json_encode(array(
         'success' => true,
-        'message' => 'Thank you, ' . $name . '! Your review has been submitted and will appear once approved.'
+        'message' => 'Thank you, ' . htmlspecialchars($name) . '! Your review has been submitted and will appear once approved.'
     ));
 } else {
     http_response_code(500);
