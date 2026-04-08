@@ -376,7 +376,7 @@ if ($action === 'edit' && $editId) {
             <label class="admin-label" for="category">Category</label>
             <select class="admin-select" id="category" name="category">
               <?php
-                $cats = array('Clay Animals', 'Watercolors', 'Wood Art', 'Keychains', 'Other');
+                $cats = array('Clay Animals', 'Watercolors', 'Wood Art', 'Keychains', 'Digital Art', 'Other');
                 $currentCat = $editItem['category'] ?? '';
                 foreach ($cats as $cat):
               ?>
