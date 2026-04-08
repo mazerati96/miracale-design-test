@@ -3,14 +3,12 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Load config
 $configPath = dirname(__DIR__) . '/config/admin.php';
 if (!file_exists($configPath)) {
     die('Configuration file missing. Upload config/admin.php via File Manager.');
 }
 require_once $configPath;
 
-// Auth check
 $loggedIn = (
     isset($_SESSION['admin_logged_in']) &&
     $_SESSION['admin_logged_in'] === true &&
@@ -28,7 +26,7 @@ if (!$loggedIn) {
 
 // Load commission status
 $statusFile      = dirname(__DIR__) . '/data/commissions.json';
-$commissionsOpen = true; // default to open
+$commissionsOpen = true;
 if (file_exists($statusFile)) {
     $decoded = json_decode(file_get_contents($statusFile), true);
     if (is_array($decoded) && isset($decoded['open'])) {
@@ -36,20 +34,22 @@ if (file_exists($statusFile)) {
     }
 }
 
-// Flash message from toggle redirect
-$toggledTo = $_GET['commissions'] ?? null; // 'open' or 'closed'
+$toggledTo = $_GET['commissions'] ?? null;
 
-// Load data
-$postsPath   = dirname(__DIR__) . '/data/posts.json';
-$eventsPath  = dirname(__DIR__) . '/data/events.json';
-$reviewsPath = dirname(__DIR__) . '/data/reviews.json';
+// Load all data
+$postsPath     = dirname(__DIR__) . '/data/posts.json';
+$eventsPath    = dirname(__DIR__) . '/data/events.json';
+$reviewsPath   = dirname(__DIR__) . '/data/reviews.json';
+$portfolioPath = dirname(__DIR__) . '/data/portfolio.json';
 
-$posts   = array();
-$events  = array();
-$reviews = array();
-if (file_exists($postsPath))   { $d = json_decode(file_get_contents($postsPath),   true); if (is_array($d)) $posts   = $d; }
-if (file_exists($eventsPath))  { $d = json_decode(file_get_contents($eventsPath),  true); if (is_array($d)) $events  = $d; }
-if (file_exists($reviewsPath)) { $d = json_decode(file_get_contents($reviewsPath), true); if (is_array($d)) $reviews = $d; }
+$posts     = array();
+$events    = array();
+$reviews   = array();
+$portfolio = array();
+if (file_exists($postsPath))     { $d = json_decode(file_get_contents($postsPath),     true); if (is_array($d)) $posts     = $d; }
+if (file_exists($eventsPath))    { $d = json_decode(file_get_contents($eventsPath),    true); if (is_array($d)) $events    = $d; }
+if (file_exists($reviewsPath))   { $d = json_decode(file_get_contents($reviewsPath),   true); if (is_array($d)) $reviews   = $d; }
+if (file_exists($portfolioPath)) { $d = json_decode(file_get_contents($portfolioPath), true); if (is_array($d)) $portfolio = $d; }
 
 $today     = date('Y-m-d');
 $published = 0; $drafts = 0;
@@ -57,7 +57,6 @@ foreach ($posts as $p) { if (!empty($p['published'])) $published++; else $drafts
 $upcoming = 0;
 foreach ($events as $e) { if (!empty($e['date']) && $e['date'] >= $today) $upcoming++; }
 
-// Review stats
 $pendingReviews  = 0;
 $approvedReviews = 0;
 $totalStars      = 0;
@@ -67,6 +66,8 @@ foreach ($reviews as $r) {
     if ($status === 'approved') { $approvedReviews++; $totalStars += (int)($r['stars'] ?? 5); }
 }
 $avgRating = $approvedReviews > 0 ? round($totalStars / $approvedReviews, 1) : 0;
+
+$portfolioCount = count(array_filter($portfolio, fn($i) => !empty($i['image'])));
 
 $recentPosts = array_slice(array_reverse($posts), 0, 5);
 ?>
@@ -85,19 +86,15 @@ $recentPosts = array_slice(array_reverse($posts), 0, 5);
     .commission-card-open   { border-top: 3px solid #2D4A3E !important; }
     .commission-card-closed { border-top: 3px solid #C9683A !important; }
     .commission-status-pill {
-      display: inline-block;
-      font-size: 0.68rem; font-weight: 700;
+      display: inline-block; font-size: 0.68rem; font-weight: 700;
       letter-spacing: 0.08em; text-transform: uppercase;
-      padding: 0.2rem 0.55rem; border-radius: 6px;
-      margin-top: 0.3rem;
+      padding: 0.2rem 0.55rem; border-radius: 6px; margin-top: 0.3rem;
     }
     .pill-open   { background: rgba(45,74,62,0.12);  color: #2D4A3E; }
     .pill-closed { background: rgba(201,104,58,0.12); color: #C9683A; }
     .flash-notice {
-      margin: 0 0 1.5rem;
-      padding: 0.75rem 1.1rem;
-      border-radius: 10px;
-      font-size: 0.85rem; font-weight: 600;
+      margin: 0 0 1.5rem; padding: 0.75rem 1.1rem;
+      border-radius: 10px; font-size: 0.85rem; font-weight: 600;
     }
     .flash-open   { background: rgba(45,74,62,0.1);  color: #2D4A3E; border: 1.5px solid rgba(45,74,62,0.2); }
     .flash-closed { background: rgba(201,104,58,0.1); color: #C9683A; border: 1.5px solid rgba(201,104,58,0.2); }
@@ -139,10 +136,10 @@ $recentPosts = array_slice(array_reverse($posts), 0, 5);
         <a href="posts.php" class="stat-link">Manage →</a>
       </div>
       <div class="stat-card">
-        <div class="stat-icon">📝</div>
-        <div class="stat-number"><?= $drafts ?></div>
-        <div class="stat-label">Drafts</div>
-        <a href="posts.php" class="stat-link">Manage →</a>
+        <div class="stat-icon">🖼️</div>
+        <div class="stat-number"><?= $portfolioCount ?></div>
+        <div class="stat-label">Portfolio Pieces</div>
+        <a href="portfolio.php" class="stat-link">Manage →</a>
       </div>
       <div class="stat-card">
         <div class="stat-icon">📅</div>
@@ -173,13 +170,18 @@ $recentPosts = array_slice(array_reverse($posts), 0, 5);
           <div class="quick-action-label">New Blog Post</div>
           <div class="quick-action-desc">Write and publish a new post</div>
         </a>
+        <a href="portfolio.php?action=new" class="quick-action-card">
+          <div class="quick-action-icon">🖼️</div>
+          <div class="quick-action-label">Add Portfolio Piece</div>
+          <div class="quick-action-desc">Upload a new artwork photo</div>
+        </a>
         <a href="events.php?action=new" class="quick-action-card">
           <div class="quick-action-icon">📍</div>
           <div class="quick-action-label">Add Event</div>
           <div class="quick-action-desc">Add an upcoming craft fair</div>
         </a>
 
-        <!-- Commission toggle — styled as a card but submits a POST form -->
+        <!-- Commission toggle -->
         <form method="POST" action="toggle-commissions.php" style="display:contents">
           <button type="submit"
                   class="quick-action-card <?= $commissionsOpen ? 'commission-card-open' : 'commission-card-closed' ?>"

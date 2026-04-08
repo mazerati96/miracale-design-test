@@ -21,6 +21,12 @@ $adminPage = basename($_SERVER['PHP_SELF'], '.php');
       </a>
     </li>
     <li>
+      <a href="portfolio.php"
+         class="admin-nav-link <?= $adminPage === 'portfolio' ? 'active' : '' ?>">
+        <span class="nav-icon">🖼️</span> Portfolio
+      </a>
+    </li>
+    <li>
       <a href="events.php"
          class="admin-nav-link <?= $adminPage === 'events' ? 'active' : '' ?>">
         <span class="nav-icon">📅</span> Events
