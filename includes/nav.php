@@ -282,6 +282,21 @@
   }
   .nav-overlay.open { opacity: 1; pointer-events: all; }
 
+  /* Cart badge */
+  .cart-badge {
+    display: none;
+    background: var(--terra, #C9683A);
+    color: white;
+    font-size: 0.6rem;
+    font-weight: 700;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    margin-left: 1px;
+    line-height: 1;
+  }
+
   /* ── RESPONSIVE ── */
   @media (max-width: 860px) {
     nav { padding: 1rem 1.5rem; }
@@ -303,12 +318,19 @@
 
     <!-- 2. Shop dropdown -->
     <li class="nav-dropdown-item" id="ddShop">
-      <button class="nav-dropdown-toggle <?= in_array($current, ['shop','commissions']) ? 'active' : '' ?>"
+      <button class="nav-dropdown-toggle <?= in_array($current, ['shop','cart','commissions']) ? 'active' : '' ?>"
               aria-haspopup="true" aria-expanded="false">
         Shop <span class="nav-caret">▼</span>
       </button>
       <ul class="nav-dropdown" role="menu">
         <li><a href="shop.php"        class="<?= $current === 'shop'        ? 'active' : '' ?>">Shop</a></li>
+        <li>
+          <a href="cart.php" class="<?= $current === 'cart' ? 'active' : '' ?>"
+             style="display:flex; align-items:center; justify-content:space-between;">
+            Cart
+            <span class="cart-badge" id="navCartBadge" style="display:none">0</span>
+          </a>
+        </li>
         <li><a href="commissions.php" class="<?= $current === 'commissions' ? 'active' : '' ?>">Commissions</a></li>
       </ul>
     </li>
@@ -370,6 +392,16 @@
 
     <div class="nav-drawer-group-label">Shop</div>
     <li><a href="shop.php"        class="<?= $current === 'shop'        ? 'active' : '' ?>">Shop        <span class="drawer-arrow">→</span></a></li>
+    <li>
+      <a href="cart.php" class="<?= $current === 'cart' ? 'active' : '' ?>"
+         style="display:flex; align-items:center; justify-content:space-between;">
+        <span>Cart</span>
+        <span style="display:flex; align-items:center; gap:0.5rem">
+          <span class="cart-badge" id="drawerCartBadge" style="display:none">0</span>
+          <span class="drawer-arrow">→</span>
+        </span>
+      </a>
+    </li>
     <li><a href="commissions.php" class="<?= $current === 'commissions' ? 'active' : '' ?>">Commissions <span class="drawer-arrow">→</span></a></li>
 
     <div class="nav-drawer-group-label">Discover</div>
@@ -450,5 +482,17 @@
   hamburger.addEventListener('click', openDrawer);
   closeBtn.addEventListener('click', closeDrawer);
   overlay.addEventListener('click', closeDrawer);
+
+  // ── Load cart badge count on every page ──
+  fetch('/cart-handler.php?action=count')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      var count = data.count || 0;
+      document.querySelectorAll('.cart-badge').forEach(function(b) {
+        b.textContent = count;
+        b.style.display = count > 0 ? 'flex' : 'none';
+      });
+    })
+    .catch(function() {}); // fail silently
 })();
 </script>

@@ -166,6 +166,7 @@
       font-family: 'Cormorant Garamond', serif;
       font-size: 1.5rem; font-weight: 500; color: var(--ink);
     }
+    /* Add to Cart button */
     .product-buy-btn {
       display: inline-flex; align-items: center; gap: 0.4rem;
       background: var(--green); color: var(--white);
@@ -188,6 +189,55 @@
       color: var(--ink-soft);
       cursor: not-allowed; box-shadow: none; transform: none;
     }
+    .product-buy-btn.adding {
+      background: var(--ochre); color: var(--ink);
+      pointer-events: none;
+    }
+
+    /* ── CART TOAST ── */
+    .cart-toast {
+      position: fixed; bottom: 2rem; left: 50%;
+      transform: translateX(-50%) translateY(120%);
+      background: var(--ink); color: var(--white);
+      padding: 0.8rem 1.5rem; border-radius: 99px;
+      font-family: 'Nunito', sans-serif; font-size: 0.88rem;
+      font-weight: 600; z-index: 400;
+      display: flex; align-items: center; gap: 0.7rem;
+      box-shadow: 0 8px 32px rgba(28,26,23,0.25);
+      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+      white-space: nowrap;
+    }
+    .cart-toast.show { transform: translateX(-50%) translateY(0); }
+    .cart-toast a {
+      color: var(--ochre); text-decoration: none; font-weight: 700;
+    }
+    .cart-toast a:hover { text-decoration: underline; }
+
+    /* ── FLOATING CART BAR ── */
+    .cart-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: var(--green); color: var(--white);
+      padding: 1rem 2rem; z-index: 300;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem; transform: translateY(100%);
+      transition: transform 0.35s ease;
+      box-shadow: 0 -4px 24px rgba(28,26,23,0.15);
+    }
+    .cart-bar.show { transform: translateY(0); }
+    .cart-bar-info {
+      font-family: 'Nunito', sans-serif; font-size: 0.9rem; font-weight: 600;
+    }
+    .cart-bar-count { opacity: 0.75; font-size: 0.8rem; }
+    .cart-bar-btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: var(--white); color: var(--green);
+      padding: 0.65rem 1.5rem; border-radius: 40px;
+      font-family: 'Nunito', sans-serif; font-size: 0.85rem; font-weight: 700;
+      text-decoration: none; flex-shrink: 0;
+      transition: background 0.2s, transform 0.2s;
+      box-shadow: 0 3px 14px rgba(255,253,248,0.2);
+    }
+    .cart-bar-btn:hover { background: var(--parchment); transform: translateY(-1px); }
 
     /* Empty / error states */
     .shop-empty {
@@ -388,14 +438,18 @@ if ($stripeLoaded) {
               <?php endif; ?>
             </div>
             <?php if ($inStock && $priceId): ?>
-              <form action="checkout.php" method="POST">
-                <input type="hidden" name="price_id"    value="<?= htmlspecialchars($priceId) ?>" />
-                <input type="hidden" name="product_name" value="<?= htmlspecialchars($product->name) ?>" />
-                <button type="submit" class="product-buy-btn">
-                  Buy Now
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </button>
-              </form>
+              <button type="button" class="product-buy-btn"
+                      onclick="addToCart(
+                        '<?= htmlspecialchars($priceId) ?>',
+                        '<?= htmlspecialchars(addslashes($product->name)) ?>',
+                        <?= (int)$amount ?>,
+                        '<?= htmlspecialchars($imageUrl ?? '') ?>',
+                        '<?= htmlspecialchars($category) ?>',
+                        this
+                      )">
+                Add to Cart
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
             <?php else: ?>
               <button class="product-buy-btn sold-out" disabled>Sold Out</button>
             <?php endif; ?>
@@ -409,6 +463,25 @@ if ($stripeLoaded) {
 </section>
 
 <?php include 'includes/footer.php'; ?>
+
+<!-- Cart toast notification -->
+<div class="cart-toast" id="cartToast">
+  <span id="cartToastMsg">Added to cart!</span>
+  <a href="cart.php">View Cart →</a>
+</div>
+
+<!-- Floating cart bar (appears when cart has items) -->
+<div class="cart-bar" id="cartBar">
+  <div class="cart-bar-info">
+    <div id="cartBarTitle">Your cart</div>
+    <div class="cart-bar-count" id="cartBarCount"></div>
+  </div>
+  <a href="cart.php" class="cart-bar-btn">
+    View Cart
+    <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </a>
+</div>
+
 <script src="script.js"></script>
 <script>
   // ── Category filter ──
@@ -430,6 +503,88 @@ if ($stripeLoaded) {
       countEl.textContent = `${visible} item${visible !== 1 ? 's' : ''}`;
     });
   });
+
+  // ── Cart state ──
+  let cartCount    = 0;
+  let toastTimeout = null;
+
+  // Load current cart count on page load
+  fetch('cart-handler.php?action=count')
+    .then(r => r.json())
+    .then(data => {
+      cartCount = data.count || 0;
+      refreshCartBar(cartCount, data.subtotal || 0);
+      updateNavBadge(cartCount);
+    });
+
+  // ── Add to cart ──
+  function addToCart(priceId, name, amount, imageUrl, category, btn) {
+    btn.classList.add('adding');
+    btn.textContent = 'Adding...';
+
+    const body = new URLSearchParams({
+      action:       'add',
+      price_id:     priceId,
+      product_name: name,
+      amount:       amount,
+      image_url:    imageUrl,
+      category:     category,
+    });
+
+    fetch('cart-handler.php', { method: 'POST', body: body })
+      .then(r => r.json())
+      .then(data => {
+        btn.classList.remove('adding');
+        btn.innerHTML = '✓ Added <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+        btn.style.background = 'var(--green)';
+
+        setTimeout(() => {
+          btn.innerHTML = 'Add to Cart <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+        }, 2000);
+
+        if (data.success) {
+          cartCount = data.count;
+          showToast(data.message);
+          refreshCartBar(data.count, data.subtotal);
+          updateNavBadge(data.count);
+        }
+      })
+      .catch(() => {
+        btn.classList.remove('adding');
+        btn.textContent = 'Add to Cart';
+      });
+  }
+
+  // ── Toast ──
+  function showToast(msg) {
+    const toast = document.getElementById('cartToast');
+    document.getElementById('cartToastMsg').textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => toast.classList.remove('show'), 3500);
+  }
+
+  // ── Cart bar ──
+  function refreshCartBar(count, subtotalCents) {
+    const bar = document.getElementById('cartBar');
+    if (count > 0) {
+      bar.classList.add('show');
+      document.getElementById('cartBarTitle').textContent =
+        '$' + (subtotalCents / 100).toFixed(2) + ' in your cart';
+      document.getElementById('cartBarCount').textContent =
+        count + ' item' + (count !== 1 ? 's' : '');
+    } else {
+      bar.classList.remove('show');
+    }
+  }
+
+  // ── Nav badge ──
+  function updateNavBadge(count) {
+    document.querySelectorAll('.cart-badge').forEach(b => {
+      b.textContent = count;
+      b.style.display = count > 0 ? 'flex' : 'none';
+    });
+  }
 </script>
 </body>
 </html>
