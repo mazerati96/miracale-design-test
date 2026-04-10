@@ -344,7 +344,7 @@
   <div class="story-img-wrap">
     <div class="story-img-frame">
       <!-- Replace with: <img src="images/artist-photo.jpg" alt="The artist behind Miracale Design" /> -->
-      <div class="story-img-placeholder">🎨</div>
+      <img src="assets/turtle.png" alt="The art behind Miracale Design" />
       <div class="story-img-label">The artist at work</div>
     </div>
     <div class="story-accent">
@@ -418,24 +418,24 @@
   </div>
   <div class="crafts-grid">
     <div class="craft-card">
-      <div class="craft-icon">🐾</div>
-      <div class="craft-name">Clay Animals</div>
-      <p class="craft-desc">Hand-sculpted figures, each with their own little personality.</p>
+      <img src="assets/clay-figures.png" alt="clay art" style="width:100%; height:100%; object-fit:fill; display:block;"/>
+     <!-- <div class="craft-name">Clay Animals</div>
+      <p class="craft-desc">Hand-sculpted figures, each with their own little personality.</p> -->
     </div>
     <div class="craft-card">
-      <div class="craft-icon">🎨</div>
-      <div class="craft-name">Watercolors</div>
-      <p class="craft-desc">Original painted pieces — landscapes, portraits, and more.</p>
+       <img src="assets/watercolors.png" alt="watercolors" style="width:100%; height:100%; object-fit:fill; display:block;"/>
+      <!-- <div class="craft-name">Watercolors</div>
+      <p class="craft-desc">Original painted pieces — landscapes, portraits, and more.</p> -->
     </div>
     <div class="craft-card">
-      <div class="craft-icon">🪵</div>
-      <div class="craft-name">Wood Art</div>
-      <p class="craft-desc">Carved and textured works that bring nature indoors.</p>
+       <img src="assets/jiji.png" alt="wood art" style="width:100%; height:100%; object-fit:fill; display:block;"/>
+      <!-- <div class="craft-name">Wood Art</div>
+      <p class="craft-desc">Carved and textured works that bring nature indoors.</p> -->
     </div>
     <div class="craft-card">
-      <div class="craft-icon">🗝️</div>
-      <div class="craft-name">Keychains</div>
-      <p class="craft-desc">Carry a little handmade art with you wherever you go.</p>
+       <img src="assets/keychains.png" alt="clay keychains" style="width:100%; height:100%; object-fit:fill; display:block;"/>
+      <!-- <div class="craft-name">Keychains</div>
+      <p class="craft-desc">Carry a little handmade art with you wherever you go.</p> -->
     </div>
   </div>
 </section>
