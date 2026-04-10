@@ -169,6 +169,7 @@
     transition: background 0.2s, color 0.2s;
     font-size: 0.9rem;
     flex-shrink: 0;
+    margin-left: 0.6rem; /* matches the gap between social icons */
   }
   .nav-cart-btn:hover { background: var(--terra, #C9683A); color: white; }
   .nav-cart-btn .nav-cart-badge {
