@@ -197,17 +197,23 @@
     /* ── CART TOAST ── */
     .cart-toast {
       position: fixed; bottom: 2rem; left: 50%;
-      transform: translateX(-50%) translateY(120%);
+      transform: translateX(-50%) translateY(calc(100% + 3rem));
+      opacity: 0;
+      pointer-events: none;
       background: var(--ink); color: var(--white);
       padding: 0.8rem 1.5rem; border-radius: 99px;
       font-family: 'Nunito', sans-serif; font-size: 0.88rem;
       font-weight: 600; z-index: 400;
       display: flex; align-items: center; gap: 0.7rem;
       box-shadow: 0 8px 32px rgba(28,26,23,0.25);
-      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), opacity 0.35s ease;
       white-space: nowrap;
     }
-    .cart-toast.show { transform: translateX(-50%) translateY(0); }
+    .cart-toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+      pointer-events: all;
+    }
     .cart-toast a {
       color: var(--ochre); text-decoration: none; font-weight: 700;
     }
