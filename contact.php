@@ -315,20 +315,13 @@
           </div>
         </div>
       </div>
-      <div class="contact-detail-row">
-        <div class="contact-detail-icon">📞</div>
-        <div>
-          <div class="contact-detail-label">Phone</div>
-          <div class="contact-detail-value">
-            <a href="tel:5402410764">540-241-0764</a>
-          </div>
-        </div>
+      
       </div>
       <div class="contact-detail-row">
         <div class="contact-detail-icon">📍</div>
         <div>
           <div class="contact-detail-label">Location</div>
-          <div class="contact-detail-value">Virginia, USA</div>
+          <div class="contact-detail-value">Southwest Virginia, USA</div>
         </div>
       </div>
     </div>

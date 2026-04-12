@@ -194,7 +194,156 @@
       pointer-events: none;
     }
 
-    /* ── CART TOAST ── */
+    /* ── VIEW DETAILS HOVER OVERLAY ON CARD IMAGE ── */
+    .product-img-wrap { cursor: pointer; }
+    .product-img-view {
+      position: absolute; inset: 0;
+      background: rgba(28,26,23,0.45);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity 0.25s ease;
+      backdrop-filter: blur(2px);
+    }
+    .product-img-view span {
+      background: var(--white); color: var(--ink);
+      font-family: 'Nunito', sans-serif; font-size: 0.78rem;
+      font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 0.5rem 1.1rem; border-radius: 99px;
+    }
+    .product-img-wrap:hover .product-img-view { opacity: 1; }
+    .product-name { cursor: pointer; }
+    .product-name:hover { color: var(--terra); }
+
+    /* ── PRODUCT MODAL ── */
+    .product-modal {
+      position: fixed; inset: 0;
+      background: rgba(28,26,23,0.6);
+      backdrop-filter: blur(6px);
+      z-index: 450;
+      display: flex; align-items: center; justify-content: center;
+      padding: 2rem 1.5rem;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease;
+      overflow-y: auto;
+    }
+    .product-modal.open {
+      opacity: 1; pointer-events: all;
+    }
+    .product-modal-inner {
+      background: var(--white);
+      border-radius: 24px;
+      width: 100%; max-width: 860px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      overflow: hidden;
+      box-shadow: 0 32px 80px rgba(28,26,23,0.22);
+      transform: translateY(24px) scale(0.98);
+      transition: transform 0.3s cubic-bezier(0.34,1.2,0.64,1);
+      position: relative;
+    }
+    .product-modal.open .product-modal-inner {
+      transform: translateY(0) scale(1);
+    }
+    /* Close button */
+    .modal-close-btn {
+      position: absolute; top: 1.2rem; right: 1.2rem;
+      width: 36px; height: 36px; border-radius: 50%;
+      background: rgba(28,26,23,0.08); border: none; cursor: pointer;
+      font-size: 1rem; color: var(--ink-soft); z-index: 10;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, color 0.2s;
+    }
+    .modal-close-btn:hover { background: var(--terra); color: white; }
+
+    /* Image panel */
+    .modal-img-panel {
+      background: linear-gradient(135deg, var(--parchment), #e8d5b5);
+      min-height: 420px;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; position: relative;
+    }
+    .modal-img-panel img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+    }
+    .modal-img-placeholder { font-size: 6rem; }
+    .modal-sold-out-ribbon {
+      position: absolute; top: 1rem; left: 1rem;
+      background: var(--ink-soft); color: white;
+      font-size: 0.68rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 0.28rem 0.7rem; border-radius: 6px;
+    }
+
+    /* Info panel */
+    .modal-info-panel {
+      padding: 2.5rem 2.2rem;
+      display: flex; flex-direction: column;
+      justify-content: center; gap: 0;
+      overflow-y: auto; max-height: 90vh;
+    }
+    .modal-category {
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--terra); margin-bottom: 0.6rem;
+    }
+    .modal-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+      font-weight: 400; color: var(--ink); line-height: 1.15;
+      margin-bottom: 1rem;
+    }
+    .modal-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem; font-weight: 500; color: var(--ink);
+      margin-bottom: 1.2rem;
+    }
+    .modal-divider {
+      height: 1px; background: rgba(28,26,23,0.08);
+      margin: 0 0 1.2rem;
+    }
+    .modal-desc {
+      font-size: 0.92rem; color: var(--ink-soft);
+      line-height: 1.8; margin-bottom: 1.6rem; flex: 1;
+    }
+    .modal-handmade-note {
+      display: flex; align-items: center; gap: 0.6rem;
+      font-size: 0.78rem; color: var(--ink-soft);
+      background: var(--parchment); border-radius: 10px;
+      padding: 0.7rem 1rem; margin-bottom: 1.6rem;
+    }
+    .modal-actions { display: flex; flex-direction: column; gap: 0.8rem; }
+    .modal-add-btn {
+      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+      width: 100%; padding: 0.9rem;
+      background: var(--green); color: var(--white);
+      border: none; border-radius: 40px; cursor: pointer;
+      font-family: 'Nunito', sans-serif; font-size: 0.92rem;
+      font-weight: 600; letter-spacing: 0.06em;
+      transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 20px rgba(45,74,62,0.28);
+    }
+    .modal-add-btn:hover {
+      background: var(--green-light);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(45,74,62,0.32);
+    }
+    .modal-add-btn.adding { background: var(--ochre); color: var(--ink); pointer-events: none; }
+    .modal-add-btn:disabled {
+      background: rgba(28,26,23,0.15); color: var(--ink-soft);
+      cursor: not-allowed; transform: none; box-shadow: none;
+    }
+    .modal-view-cart {
+      display: block; text-align: center;
+      font-size: 0.8rem; color: var(--ink-soft);
+      text-decoration: none; transition: color 0.2s;
+    }
+    .modal-view-cart:hover { color: var(--terra); }
+
+    @media (max-width: 680px) {
+      .product-modal-inner { grid-template-columns: 1fr; }
+      .modal-img-panel { min-height: 260px; }
+      .modal-info-panel { padding: 1.8rem; max-height: none; }
+    }
     .cart-toast {
       position: fixed; bottom: 2rem; left: 50%;
       transform: translateX(-50%) translateY(calc(100% + 3rem));

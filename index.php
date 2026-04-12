@@ -245,10 +245,7 @@
                 <span>📧</span>
                 <span>miracaledesign2021@gmail.com</span>
             </div>
-            <div class="contact-detail">
-                <span>📞</span>
-                <span>540-241-0764</span>
-            </div>
+            
             <a href="contact.php" class="btn-primary" style="justify-content:center; margin-top:0.4rem;">
                 Send a Message
             </a>

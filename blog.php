@@ -298,6 +298,67 @@
     }
     .events-empty-body { font-size: 0.88rem; color: var(--ink-soft); }
 
+    /* ── EVENT MODAL ── */
+    .event-modal {
+      position: fixed; inset: 0;
+      background: rgba(28,26,23,0.7);
+      z-index: 500;
+      display: flex; align-items: center; justify-content: center;
+      padding: 2rem 1.5rem;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .event-modal.open { opacity: 1; pointer-events: all; }
+    .event-modal-inner {
+      background: var(--white);
+      border-radius: 24px; padding: 2.5rem;
+      max-width: 560px; width: 100%;
+      position: relative;
+      box-shadow: 0 24px 80px rgba(28,26,23,0.2);
+      transform: translateY(20px); transition: transform 0.3s;
+      max-height: 90vh; overflow-y: auto;
+    }
+    .event-modal.open .event-modal-inner { transform: translateY(0); }
+    .event-modal-close {
+      position: absolute; top: 1.2rem; right: 1.2rem;
+      width: 34px; height: 34px;
+      background: var(--parchment); border: none; border-radius: 50%;
+      font-size: 0.95rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .event-modal-close:hover { background: var(--terra); color: white; }
+    .event-modal-date-tag {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--terra);
+      margin-bottom: 0.8rem;
+    }
+    .event-modal-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 400;
+      color: var(--ink); line-height: 1.2; margin-bottom: 1.5rem;
+    }
+    .event-modal-detail {
+      display: flex; gap: 0.8rem; align-items: flex-start;
+      margin-bottom: 1rem;
+      font-size: 0.88rem; color: var(--ink-soft); line-height: 1.55;
+    }
+    .event-modal-detail-icon { font-size: 1rem; flex-shrink: 0; margin-top: 0.05rem; }
+    .event-modal-detail strong { display: block; color: var(--ink); font-weight: 600; }
+    .event-modal-desc {
+      margin-top: 1.2rem; padding-top: 1.2rem;
+      border-top: 1px solid rgba(28,26,23,0.07);
+      font-size: 0.9rem; color: var(--ink-soft); line-height: 1.75;
+    }
+    .event-modal-actions {
+      margin-top: 1.5rem; display: flex; gap: 0.8rem; flex-wrap: wrap;
+    }
+
+    /* Make event cards look clickable */
+    .event-card { cursor: pointer; }
+    .event-card:hover { transform: translateY(-3px); box-shadow: 0 10px 36px rgba(28,26,23,0.1); }
+
     @media (max-width: 900px) {
       .page-hero { padding: 8rem 1.5rem 3rem; }
       .blog-section, .events-section { padding: 0 1.5rem 5rem; }
@@ -481,7 +542,24 @@ function yearNum($date) {
   <?php if (!empty($events)): ?>
   <div class="events-list reveal">
     <?php foreach ($events as $event): ?>
-    <div class="event-card">
+    <?php
+      // Build the full date string for the modal
+      $dateStr = date('F j, Y', strtotime($event['date']));
+      if (!empty($event['end_date'])) {
+          $dateStr .= ' – ' . date('F j, Y', strtotime($event['end_date']));
+      }
+      $eventJson = htmlspecialchars(json_encode(array(
+          'title'       => $event['title']       ?? '',
+          'date'        => $dateStr,
+          'location'    => $event['location']    ?? '',
+          'venue'       => $event['venue']       ?? '',
+          'address'     => $event['address']     ?? '',
+          'description' => $event['description'] ?? '',
+          'link'        => $event['link']        ?? '',
+          'multiday'    => !empty($event['end_date']),
+      )), ENT_QUOTES);
+    ?>
+    <div class="event-card" onclick="openEventModal(<?= $eventJson ?>)">
       <div class="event-date-block">
         <div class="event-month"><?= shortMonth($event['date']) ?></div>
         <div class="event-day"><?= dayNum($event['date']) ?></div>
@@ -504,7 +582,7 @@ function yearNum($date) {
           <div class="event-desc"><?= htmlspecialchars($event['description']) ?></div>
         <?php endif; ?>
       </div>
-      <div class="event-cta">
+      <div class="event-cta" onclick="event.stopPropagation()">
         <?php if (!empty($event['link'])): ?>
           <a href="<?= htmlspecialchars($event['link']) ?>"
              class="event-link-btn" target="_blank" rel="noopener">
@@ -543,6 +621,17 @@ function yearNum($date) {
 
 <?php include 'includes/footer.php'; ?>
 <script src="script.js"></script>
+
+<!-- EVENT MODAL -->
+<div class="event-modal" id="eventModal" onclick="handleEventModalClick(event)">
+  <div class="event-modal-inner" id="eventModalInner">
+    <button class="event-modal-close" onclick="closeEventModal()">&#x2715;</button>
+    <div class="event-modal-date-tag" id="eventModalDate"></div>
+    <h2 class="event-modal-title" id="eventModalTitle"></h2>
+    <div id="eventModalDetails"></div>
+    <div class="event-modal-actions" id="eventModalActions"></div>
+  </div>
+</div>
 <script>
 // ── Tab switcher ──
 function switchTab(tab) {
@@ -611,6 +700,72 @@ document.addEventListener('keydown', function(e) {
 });
 
 if (window.location.hash === '#events') switchTab('events');
+</script>
+<script>
+// ── Event modal ──
+function openEventModal(e) {
+  document.getElementById('eventModalDate').textContent = '📅 ' + e.date;
+  document.getElementById('eventModalTitle').textContent = e.title;
+
+  var details = '';
+
+  if (e.location) {
+    details += '<div class="event-modal-detail">' +
+      '<span class="event-modal-detail-icon">📍</span>' +
+      '<div><strong>Location</strong>' + escHtml(e.location) + '</div>' +
+      '</div>';
+  }
+  if (e.venue) {
+    details += '<div class="event-modal-detail">' +
+      '<span class="event-modal-detail-icon">🏛️</span>' +
+      '<div><strong>Venue</strong>' + escHtml(e.venue) + '</div>' +
+      '</div>';
+  }
+  if (e.address) {
+    details += '<div class="event-modal-detail">' +
+      '<span class="event-modal-detail-icon">🗺️</span>' +
+      '<div><strong>Address</strong>' + escHtml(e.address) +
+        '<br><a href="https://maps.google.com/?q=' + encodeURIComponent(e.address) +
+        '" target="_blank" rel="noopener" style="font-size:0.8rem;color:var(--terra);font-weight:600;">Open in Maps →</a>' +
+      '</div></div>';
+  }
+  if (e.description) {
+    details += '<div class="event-modal-desc">' + escHtml(e.description) + '</div>';
+  }
+
+  document.getElementById('eventModalDetails').innerHTML = details;
+
+  var actions = '';
+  if (e.link) {
+    actions += '<a href="' + escHtml(e.link) + '" class="btn-primary" target="_blank" rel="noopener" ' +
+      'style="font-size:0.85rem;padding:0.7rem 1.5rem;">' +
+      'View Event Page →</a>';
+  }
+  actions += '<a href="contact.php" class="btn-ghost" style="font-size:0.85rem;">Ask a question →</a>';
+  document.getElementById('eventModalActions').innerHTML = actions;
+
+  document.getElementById('eventModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeEventModal() {
+  document.getElementById('eventModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function handleEventModalClick(e) {
+  if (e.target === document.getElementById('eventModal')) closeEventModal();
+}
+
+function escHtml(str) {
+  var d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeEventModal();
+});
 </script>
 </body>
 </html>
