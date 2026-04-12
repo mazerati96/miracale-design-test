@@ -558,9 +558,21 @@ if ($stripeLoaded) {
         $category = $product->metadata['category'] ?? '';
         $imageUrl = !empty($product->images) ? $product->images[0] : null;
         $priceId  = $price ? $price->id : null;
+
+        // Build JS-safe versions for onclick attributes
+        $jsName     = htmlspecialchars(addslashes($product->name), ENT_QUOTES);
+        $jsDesc     = htmlspecialchars(addslashes($product->description ?? ''), ENT_QUOTES);
+        $jsImage    = htmlspecialchars($imageUrl ?? '', ENT_QUOTES);
+        $jsCat      = htmlspecialchars($category, ENT_QUOTES);
+        $jsPriceId  = htmlspecialchars($priceId ?? '', ENT_QUOTES);
+        $jsAmount   = (int)$amount;
+        $jsInStock  = $inStock ? 'true' : 'false';
       ?>
       <div class="product-card" data-category="<?= htmlspecialchars($category) ?>">
-        <div class="product-img-wrap">
+
+        <!-- Clicking the image opens the modal -->
+        <div class="product-img-wrap"
+             onclick="openModal('<?= $jsName ?>', <?= $jsAmount ?>, '<?= $jsDesc ?>', '<?= $jsImage ?>', '<?= $jsCat ?>', <?= $jsInStock ?>, '<?= $jsPriceId ?>')">
           <?php if ($imageUrl): ?>
             <img src="<?= htmlspecialchars($imageUrl) ?>"
                  alt="<?= htmlspecialchars($product->name) ?>"
@@ -574,13 +586,21 @@ if ($stripeLoaded) {
           <?php if (!$inStock): ?>
             <span class="product-badge sold-out">Sold Out</span>
           <?php endif; ?>
+          <!-- "View Details" hover overlay -->
+          <div class="product-img-view"><span>View Details</span></div>
         </div>
 
         <div class="product-info">
           <?php if ($category): ?>
             <div class="product-category"><?= htmlspecialchars(ucfirst($category)) ?></div>
           <?php endif; ?>
-          <div class="product-name"><?= htmlspecialchars($product->name) ?></div>
+
+          <!-- Clicking the name also opens the modal -->
+          <div class="product-name"
+               onclick="openModal('<?= $jsName ?>', <?= $jsAmount ?>, '<?= $jsDesc ?>', '<?= $jsImage ?>', '<?= $jsCat ?>', <?= $jsInStock ?>, '<?= $jsPriceId ?>')">
+            <?= htmlspecialchars($product->name) ?>
+          </div>
+
           <?php if ($product->description): ?>
             <div class="product-desc"><?= htmlspecialchars($product->description) ?></div>
           <?php endif; ?>
@@ -595,11 +615,11 @@ if ($stripeLoaded) {
             <?php if ($inStock && $priceId): ?>
               <button type="button" class="product-buy-btn"
                       onclick="addToCart(
-                        '<?= htmlspecialchars($priceId) ?>',
-                        '<?= htmlspecialchars(addslashes($product->name)) ?>',
-                        <?= (int)$amount ?>,
-                        '<?= htmlspecialchars($imageUrl ?? '') ?>',
-                        '<?= htmlspecialchars($category) ?>',
+                        '<?= $jsPriceId ?>',
+                        '<?= $jsName ?>',
+                        <?= $jsAmount ?>,
+                        '<?= $jsImage ?>',
+                        '<?= $jsCat ?>',
                         this
                       )">
                 Add to Cart
@@ -618,6 +638,34 @@ if ($stripeLoaded) {
 </section>
 
 <?php include 'includes/footer.php'; ?>
+
+<!-- ── PRODUCT MODAL ── -->
+<div class="product-modal" id="productModal">
+  <div class="product-modal-inner">
+    <button class="modal-close-btn" onclick="closeModal()" aria-label="Close">✕</button>
+
+    <!-- Left: image -->
+    <div class="modal-img-panel" id="modalImgPanel">
+      <img id="modalImg" src="" alt="" style="display:none" />
+      <div class="modal-img-placeholder" id="modalImgPlaceholder" style="display:none">🎨</div>
+      <div class="modal-sold-out-ribbon" id="modalSoldOutRibbon" style="display:none">Sold Out</div>
+    </div>
+
+    <!-- Right: info -->
+    <div class="modal-info-panel">
+      <div class="modal-category" id="modalCategory"></div>
+      <div class="modal-name"     id="modalName"></div>
+      <div class="modal-price"    id="modalPrice"></div>
+      <div class="modal-divider"></div>
+      <div class="modal-desc"     id="modalDesc"></div>
+      <div class="modal-handmade-note">✦ Every piece is handmade and one of a kind.</div>
+      <div class="modal-actions">
+        <button class="modal-add-btn" id="modalAddBtn">Add to Cart</button>
+        <a href="cart.php" class="modal-view-cart">View Cart →</a>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Cart toast notification -->
 <div class="cart-toast" id="cartToast">
@@ -671,6 +719,71 @@ if ($stripeLoaded) {
       refreshCartBar(cartCount, data.subtotal || 0);
       updateNavBadge(cartCount);
     });
+
+  // ── Modal open/close ──
+  const modal = document.getElementById('productModal');
+
+  function openModal(name, amount, desc, imageUrl, category, inStock, priceId) {
+    // Populate text fields
+    document.getElementById('modalName').textContent     = name;
+    document.getElementById('modalCategory').textContent = category ? category.toUpperCase() : '';
+    document.getElementById('modalDesc').textContent     = desc || '';
+    document.getElementById('modalPrice').textContent    = amount ? '$' + (amount / 100).toFixed(2) : 'Contact for price';
+
+    // Image or placeholder
+    const img         = document.getElementById('modalImg');
+    const placeholder = document.getElementById('modalImgPlaceholder');
+    if (imageUrl) {
+      img.src          = imageUrl;
+      img.alt          = name;
+      img.style.display        = 'block';
+      placeholder.style.display = 'none';
+    } else {
+      img.style.display         = 'none';
+      placeholder.style.display = 'flex';
+    }
+
+    // Sold out ribbon
+    document.getElementById('modalSoldOutRibbon').style.display = inStock ? 'none' : 'block';
+
+    // Add to Cart button
+    const addBtn = document.getElementById('modalAddBtn');
+    if (inStock && priceId) {
+      addBtn.disabled    = false;
+      addBtn.textContent = 'Add to Cart';
+      addBtn.onclick = () => {
+        closeModal();
+        // Find the matching card button so addToCart can animate it,
+        // or fall back to the modal button itself (already closed, so just use a dummy).
+        const dummyBtn = document.createElement('button');
+        dummyBtn.className = 'product-buy-btn';
+        addToCart(priceId, name, amount, imageUrl, category, dummyBtn);
+      };
+    } else {
+      addBtn.disabled    = true;
+      addBtn.textContent = 'Sold Out';
+      addBtn.onclick     = null;
+    }
+
+    // Show modal
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  // Close when clicking the backdrop
+  modal.addEventListener('click', e => {
+    if (e.target === modal) closeModal();
+  });
+
+  // Close on Escape key
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+  });
 
   // ── Add to cart ──
   function addToCart(priceId, name, amount, imageUrl, category, btn) {
