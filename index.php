@@ -46,7 +46,7 @@
 
         <div class="hero-collage">
             <div class="collage-card card-1">
-                <img src="assets/elephant.png"
+                <img src="assets/totoro.png"
                      alt="Handmade clay animal figures"
                      style="width:100%; height:100%; object-fit:fill; display:block;" />
             </div>
@@ -206,7 +206,7 @@
                      style="width:100%; height:100%; object-fit:fill; display:block;" />
             </div>
             <div class="spotlight-card">
-                <img src="assets/raccoon.png"
+                <img src="assets/strawberry-cow.png"
                      alt="Handcrafted wood art and coasters"
                      style="width:100%; height:100%; object-fit:fill; display:block;" />
             </div>
