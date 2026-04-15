@@ -459,9 +459,9 @@
 
   <div class="nav-drawer-social-title">Find us online</div>
   <div class="nav-drawer-socials">
-    <a href="#" class="nav-drawer-social-btn" target="_blank" rel="noopener">📘 Facebook</a>
-    <a href="#" class="nav-drawer-social-btn" target="_blank" rel="noopener">📸 Instagram</a>
-    <a href="#" class="nav-drawer-social-btn" target="_blank" rel="noopener">💬 Discord</a>
+    <a href="https://www.facebook.com/people/Miracale-Design/100087238136791/?mibextid=qi2Omg&rdid=Dg3OgiLvBX9PXyD1&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2FKVkduwbCeaL1WB9t%2F%3Fmibextid%3Dqi2Omg" class="nav-drawer-social-btn" target="_blank" rel="noopener">📘 Facebook</a>
+    <a href="https://www.instagram.com/miracaledesign?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" class="nav-drawer-social-btn" target="_blank" rel="noopener">📸 Instagram</a>
+    <a href="https://discord.gg/NahxUMG" class="nav-drawer-social-btn" target="_blank" rel="noopener">💬 Discord</a>
   </div>
 </div>
 
