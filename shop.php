@@ -219,7 +219,9 @@
       background: rgba(28,26,23,0.6);
       backdrop-filter: blur(6px);
       z-index: 450;
-      display: flex; align-items: center; justify-content: center;
+      display: flex;
+      align-items: flex-start;      /* start at top so tall modals scroll down, not up */
+      justify-content: center;
       padding: 2rem 1.5rem;
       opacity: 0; pointer-events: none;
       transition: opacity 0.3s ease;
@@ -258,12 +260,14 @@
     .modal-img-panel {
       background: linear-gradient(135deg, var(--parchment), #e8d5b5);
       min-height: 420px;
+      max-height: 80vh;             /* never taller than viewport */
       display: flex; align-items: center; justify-content: center;
       overflow: hidden; position: relative;
     }
     .modal-img-panel img {
       width: 100%; height: 100%;
-      object-fit: cover; display: block;
+      object-fit: contain;          /* show full image without cropping */
+      display: block;
     }
     .modal-img-placeholder { font-size: 6rem; }
     .modal-sold-out-ribbon {
@@ -279,7 +283,6 @@
       padding: 2.5rem 2.2rem;
       display: flex; flex-direction: column;
       justify-content: center; gap: 0;
-      overflow-y: auto; max-height: 90vh;
     }
     .modal-category {
       font-size: 0.7rem; font-weight: 700;
