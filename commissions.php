@@ -90,6 +90,10 @@ if (file_exists($statusFile)) {
     }
     .status-banner.open .status-dot { background: var(--green); animation: pulse 2s infinite; }
     .status-banner.closed .status-dot { background: var(--terra); }
+    .status-banner-text {
+      flex: 1;
+      line-height: 1.5;
+    }
     @keyframes pulse {
       0%, 100% { opacity: 1; transform: scale(1); }
       50%       { opacity: 0.5; transform: scale(1.3); }
@@ -220,7 +224,13 @@ if (file_exists($statusFile)) {
 
     @media (max-width: 900px) {
       .page-hero { padding: 8rem 1.5rem 3rem; }
-      .status-banner { margin: 0 1.5rem 1rem; }
+      .status-banner {
+        margin: 0 1.5rem 1rem;
+        padding: 0.9rem 1.1rem;
+        font-size: 0.85rem;
+        align-items: flex-start;
+      }
+      .status-dot { margin-top: 0.3rem; }
       .how-section { padding: 4rem 1.5rem; }
       .how-steps { grid-template-columns: repeat(2, 1fr); }
       .how-steps::before { display: none; }
@@ -248,11 +258,13 @@ if (file_exists($statusFile)) {
 <!-- STATUS BANNER — class and text driven by commissions.json -->
 <div class="status-banner <?= $commissionsOpen ? 'open' : 'closed' ?> reveal">
   <div class="status-dot"></div>
-  <?php if ($commissionsOpen): ?>
-    Commissions are currently <strong>&nbsp;open</strong> — submissions are being accepted!
-  <?php else: ?>
-    Commissions are currently <strong>&nbsp;closed</strong> — check back soon.
-  <?php endif; ?>
+  <span class="status-banner-text">
+    <?php if ($commissionsOpen): ?>
+      Commissions are currently <strong>open</strong> — submissions are being accepted!
+    <?php else: ?>
+      Commissions are currently <strong>closed</strong> — check back soon.
+    <?php endif; ?>
+  </span>
 </div>
 
 <!-- HOW IT WORKS -->
