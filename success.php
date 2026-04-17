@@ -94,6 +94,10 @@
 <body>
 
 <?php
+// Clear the cart now that payment is confirmed
+if (session_status() === PHP_SESSION_NONE) session_start();
+$_SESSION['cart'] = array();
+
 require_once 'config/stripe.php';
 
 $session     = null;

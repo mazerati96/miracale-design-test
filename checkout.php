@@ -82,11 +82,6 @@ try {
         ),
     ));
 
-    // Clear cart after redirecting (cart purchases only)
-    if ($source === 'cart') {
-        $_SESSION['cart'] = array();
-    }
-
     header('Location: ' . $session->url);
     exit;
 

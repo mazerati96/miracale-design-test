@@ -68,15 +68,15 @@
     <h1 class="cancel-title">Your order was<br><em>not completed</em></h1>
     <p class="cancel-body">
       You cancelled the checkout — that's totally fine! Nothing was charged.
-      Your piece is still waiting for you if you change your mind, or feel
-      free to keep browsing.
+      Your cart is still saved with everything you picked, so you can pick up
+      right where you left off whenever you're ready.
     </p>
     <div class="cancel-actions">
-      <a href="shop.php" class="btn-primary">
-        Back to Shop
+      <a href="cart.php" class="btn-primary">
+        Back to Cart
         <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
-      <a href="contact.php" class="btn-ghost">Have a question?</a>
+      <a href="shop.php" class="btn-ghost">Keep Shopping</a>
     </div>
   </div>
 </section>
