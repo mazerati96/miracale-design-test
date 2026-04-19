@@ -133,6 +133,22 @@ switch ($action) {
         ));
         break;
 
+    // ── ITEMS (for restoring steppers on shop page load) ─────────────────────
+    case 'items':
+        $items = array();
+        foreach ($_SESSION['cart'] as $item) {
+            $items[] = array(
+                'price_id' => $item['price_id'],
+                'quantity' => (int)($item['quantity'] ?? 1),
+            );
+        }
+        echo json_encode(array(
+            'items'    => $items,
+            'count'    => cartCount(),
+            'subtotal' => cartSubtotal(),
+        ));
+        break;
+
     default:
         http_response_code(400);
         echo json_encode(array('success' => false, 'message' => 'Unknown action.'));

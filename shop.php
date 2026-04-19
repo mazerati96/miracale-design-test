@@ -194,6 +194,56 @@
       pointer-events: none;
     }
 
+    /* ── QUANTITY STEPPER (replaces Add to Cart after adding) ── */
+    .qty-stepper {
+      display: none;                /* hidden until item is in cart */
+      align-items: center;
+      gap: 0;
+      border: 2px solid var(--green);
+      border-radius: 40px;
+      overflow: hidden;
+      animation: stepperPop 0.25s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    .qty-stepper.visible { display: inline-flex; }
+    @keyframes stepperPop {
+      from { transform: scale(0.7); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+    .qty-stepper-btn {
+      width: 34px; height: 34px;
+      background: none; border: none; cursor: pointer;
+      font-size: 1.1rem; font-weight: 600;
+      color: var(--green); line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s, color 0.15s;
+      flex-shrink: 0;
+    }
+    .qty-stepper-btn:hover { background: var(--green); color: var(--white); }
+    .qty-stepper-val {
+      min-width: 28px; text-align: center;
+      font-family: 'Nunito', sans-serif; font-size: 0.88rem;
+      font-weight: 700; color: var(--ink);
+      pointer-events: none;
+    }
+
+    /* Modal stepper matches modal button width */
+    .modal-qty-stepper {
+      display: none;
+      align-items: center; justify-content: center;
+      gap: 0;
+      border: 2px solid var(--green);
+      border-radius: 40px; overflow: hidden;
+      width: 100%; height: 46px;
+      animation: stepperPop 0.25s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    .modal-qty-stepper.visible { display: inline-flex; }
+    .modal-qty-stepper .qty-stepper-btn {
+      flex: 1; height: 100%; font-size: 1.2rem;
+    }
+    .modal-qty-stepper .qty-stepper-val {
+      flex: 0 0 44px; font-size: 1rem;
+    }
+
     /* ── VIEW DETAILS HOVER OVERLAY ON CARD IMAGE ── */
     .product-img-wrap { cursor: pointer; }
     .product-img-view {
@@ -616,7 +666,9 @@ if ($stripeLoaded) {
               <?php endif; ?>
             </div>
             <?php if ($inStock && $priceId): ?>
-              <button type="button" class="product-buy-btn"
+              <button type="button"
+                      class="product-buy-btn"
+                      id="btn-<?= htmlspecialchars($priceId) ?>"
                       onclick="addToCart(
                         '<?= $jsPriceId ?>',
                         '<?= $jsName ?>',
@@ -628,6 +680,13 @@ if ($stripeLoaded) {
                 Add to Cart
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </button>
+              <!-- Quantity stepper — hidden until item added to cart -->
+              <div class="qty-stepper" id="stepper-<?= htmlspecialchars($priceId) ?>"
+                   data-price-id="<?= htmlspecialchars($priceId) ?>">
+                <button class="qty-stepper-btn" onclick="stepQty('<?= $jsPriceId ?>', -1)">−</button>
+                <span   class="qty-stepper-val" id="stepval-<?= htmlspecialchars($priceId) ?>">1</span>
+                <button class="qty-stepper-btn" onclick="stepQty('<?= $jsPriceId ?>',  1)">+</button>
+              </div>
             <?php else: ?>
               <button class="product-buy-btn sold-out" disabled>Sold Out</button>
             <?php endif; ?>
@@ -664,6 +723,11 @@ if ($stripeLoaded) {
       <div class="modal-handmade-note">✦ Every piece is handmade and one of a kind.</div>
       <div class="modal-actions">
         <button class="modal-add-btn" id="modalAddBtn">Add to Cart</button>
+        <div class="modal-qty-stepper" id="modalStepper">
+          <button class="qty-stepper-btn" onclick="modalStepQty(-1)">−</button>
+          <span   class="qty-stepper-val" id="modalStepVal">1</span>
+          <button class="qty-stepper-btn" onclick="modalStepQty( 1)">+</button>
+        </div>
         <a href="cart.php" class="modal-view-cart">View Cart →</a>
       </div>
     </div>
@@ -714,81 +778,61 @@ if ($stripeLoaded) {
   let cartCount    = 0;
   let toastTimeout = null;
 
-  // Load current cart count on page load
-  fetch('cart-handler.php?action=count')
+  // Track quantities per price_id so steppers stay in sync
+  const cartQtys = {};
+
+  // ── Show stepper on a card ──
+  function showStepper(priceId, qty) {
+    const btn     = document.getElementById('btn-' + priceId);
+    const stepper = document.getElementById('stepper-' + priceId);
+    const valEl   = document.getElementById('stepval-' + priceId);
+    if (!btn || !stepper) return;
+    btn.style.display     = 'none';
+    stepper.classList.add('visible');
+    if (valEl) valEl.textContent = qty;
+    cartQtys[priceId] = qty;
+  }
+
+  // ── Hide stepper, restore Add to Cart button ──
+  function hideStepper(priceId) {
+    const btn     = document.getElementById('btn-' + priceId);
+    const stepper = document.getElementById('stepper-' + priceId);
+    if (!btn || !stepper) return;
+    stepper.classList.remove('visible');
+    btn.style.display = '';
+    btn.innerHTML = 'Add to Cart <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    delete cartQtys[priceId];
+  }
+
+  // ── Stepper +/− on card ──
+  function stepQty(priceId, delta) {
+    const current = cartQtys[priceId] || 0;
+    const newQty  = Math.max(0, current + delta);
+
+    fetch('cart-handler.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: 'action=update&price_id=' + encodeURIComponent(priceId) + '&quantity=' + newQty
+    })
     .then(r => r.json())
     .then(data => {
-      cartCount = data.count || 0;
-      refreshCartBar(cartCount, data.subtotal || 0);
-      updateNavBadge(cartCount);
+      if (newQty === 0) {
+        hideStepper(priceId);
+        // Sync modal stepper if it's open for this product
+        if (currentModalPriceId === priceId) syncModalStepper(0);
+      } else {
+        const valEl = document.getElementById('stepval-' + priceId);
+        if (valEl) valEl.textContent = newQty;
+        cartQtys[priceId] = newQty;
+        if (currentModalPriceId === priceId) syncModalStepper(newQty);
+      }
+      cartCount = data.count;
+      refreshCartBar(data.count, data.subtotal);
+      updateNavBadge(data.count);
     });
-
-  // ── Modal open/close ──
-  const modal = document.getElementById('productModal');
-
-  function openModal(name, amount, desc, imageUrl, category, inStock, priceId) {
-    // Populate text fields
-    document.getElementById('modalName').textContent     = name;
-    document.getElementById('modalCategory').textContent = category ? category.toUpperCase() : '';
-    document.getElementById('modalDesc').textContent     = desc || '';
-    document.getElementById('modalPrice').textContent    = amount ? '$' + (amount / 100).toFixed(2) : 'Contact for price';
-
-    // Image or placeholder
-    const img         = document.getElementById('modalImg');
-    const placeholder = document.getElementById('modalImgPlaceholder');
-    if (imageUrl) {
-      img.src          = imageUrl;
-      img.alt          = name;
-      img.style.display        = 'block';
-      placeholder.style.display = 'none';
-    } else {
-      img.style.display         = 'none';
-      placeholder.style.display = 'flex';
-    }
-
-    // Sold out ribbon
-    document.getElementById('modalSoldOutRibbon').style.display = inStock ? 'none' : 'block';
-
-    // Add to Cart button
-    const addBtn = document.getElementById('modalAddBtn');
-    if (inStock && priceId) {
-      addBtn.disabled    = false;
-      addBtn.textContent = 'Add to Cart';
-      addBtn.onclick = () => {
-        closeModal();
-        // Find the matching card button so addToCart can animate it,
-        // or fall back to the modal button itself (already closed, so just use a dummy).
-        const dummyBtn = document.createElement('button');
-        dummyBtn.className = 'product-buy-btn';
-        addToCart(priceId, name, amount, imageUrl, category, dummyBtn);
-      };
-    } else {
-      addBtn.disabled    = true;
-      addBtn.textContent = 'Sold Out';
-      addBtn.onclick     = null;
-    }
-
-    // Show modal
-    modal.classList.add('open');
-    document.body.style.overflow = 'hidden';
   }
 
-  function closeModal() {
-    modal.classList.remove('open');
-    document.body.style.overflow = '';
-  }
-
-  // Close when clicking the backdrop
-  modal.addEventListener('click', e => {
-    if (e.target === modal) closeModal();
-  });
-
-  // Close on Escape key
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeModal();
-  });
-
-  // ── Add to cart ──
+  // ── Add to cart (initial add) ──
   function addToCart(priceId, name, amount, imageUrl, category, btn) {
     btn.classList.add('adding');
     btn.textContent = 'Adding...';
@@ -806,25 +850,126 @@ if ($stripeLoaded) {
       .then(r => r.json())
       .then(data => {
         btn.classList.remove('adding');
-        btn.innerHTML = '✓ Added <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-        btn.style.background = 'var(--green)';
-
-        setTimeout(() => {
-          btn.innerHTML = 'Add to Cart <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-        }, 2000);
-
         if (data.success) {
+          const newQty = (cartQtys[priceId] || 0) + 1;
+          showStepper(priceId, newQty);
+          // Sync modal if open
+          if (currentModalPriceId === priceId) syncModalStepper(newQty);
           cartCount = data.count;
           showToast(data.message);
           refreshCartBar(data.count, data.subtotal);
           updateNavBadge(data.count);
+        } else {
+          btn.classList.remove('adding');
+          btn.innerHTML = 'Add to Cart <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
         }
       })
       .catch(() => {
         btn.classList.remove('adding');
-        btn.textContent = 'Add to Cart';
+        btn.innerHTML = 'Add to Cart <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
       });
   }
+
+  // ── Restore steppers on page load for items already in session cart ──
+  fetch('cart-handler.php?action=count')
+    .then(r => r.json())
+    .then(data => {
+      cartCount = data.count || 0;
+      refreshCartBar(cartCount, data.subtotal || 0);
+      updateNavBadge(cartCount);
+      // Fetch full cart to restore individual steppers
+      return fetch('cart-handler.php?action=items');
+    })
+    .then(r => r.ok ? r.json() : null)
+    .then(data => {
+      if (data && data.items) {
+        data.items.forEach(item => {
+          cartQtys[item.price_id] = item.quantity;
+          showStepper(item.price_id, item.quantity);
+        });
+      }
+    })
+    .catch(() => {}); // fail silently if items endpoint not yet added
+
+  // ── Modal stepper sync ──
+  let currentModalPriceId = null;
+
+  function syncModalStepper(qty) {
+    const addBtn  = document.getElementById('modalAddBtn');
+    const stepper = document.getElementById('modalStepper');
+    const valEl   = document.getElementById('modalStepVal');
+    if (qty > 0) {
+      addBtn.style.display  = 'none';
+      stepper.classList.add('visible');
+      if (valEl) valEl.textContent = qty;
+    } else {
+      stepper.classList.remove('visible');
+      addBtn.style.display = '';
+      addBtn.disabled      = false;
+      addBtn.textContent   = 'Add to Cart';
+    }
+  }
+
+  function modalStepQty(delta) {
+    if (!currentModalPriceId) return;
+    stepQty(currentModalPriceId, delta);
+  }
+
+  // ── Modal open/close ──
+  const modal = document.getElementById('productModal');
+
+  function openModal(name, amount, desc, imageUrl, category, inStock, priceId) {
+    currentModalPriceId = priceId;
+
+    document.getElementById('modalName').textContent     = name;
+    document.getElementById('modalCategory').textContent = category ? category.toUpperCase() : '';
+    document.getElementById('modalDesc').textContent     = desc || '';
+    document.getElementById('modalPrice').textContent    = amount ? '$' + (amount / 100).toFixed(2) : 'Contact for price';
+
+    const img         = document.getElementById('modalImg');
+    const placeholder = document.getElementById('modalImgPlaceholder');
+    if (imageUrl) {
+      img.src = imageUrl; img.alt = name;
+      img.style.display         = 'block';
+      placeholder.style.display = 'none';
+    } else {
+      img.style.display         = 'none';
+      placeholder.style.display = 'flex';
+    }
+
+    document.getElementById('modalSoldOutRibbon').style.display = inStock ? 'none' : 'block';
+
+    const addBtn = document.getElementById('modalAddBtn');
+    if (inStock && priceId) {
+      addBtn.disabled  = false;
+      addBtn.onclick   = () => {
+        const dummyBtn = document.createElement('button');
+        dummyBtn.className = 'product-buy-btn';
+        document.body.appendChild(dummyBtn);
+        addToCart(priceId, name, amount, imageUrl, category, dummyBtn);
+        dummyBtn.remove();
+      };
+      // Restore stepper state if already in cart
+      const existingQty = cartQtys[priceId] || 0;
+      syncModalStepper(existingQty);
+    } else {
+      addBtn.disabled    = true;
+      addBtn.textContent = 'Sold Out';
+      addBtn.onclick     = null;
+      syncModalStepper(0);
+    }
+
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
   // ── Toast ──
   function showToast(msg) {

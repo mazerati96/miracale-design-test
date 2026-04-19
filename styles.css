@@ -347,7 +347,15 @@ body {
     text-transform: uppercase;
     opacity: 0.55;
     animation: fadeIn 2s 1.5s ease both;
+    z-index: 10; /* sit above hero-text and hero-collage (both z-index:2) */
+    cursor: pointer; /* show hand cursor so it's obviously clickable */
+    pointer-events: all; /* ensure clicks are never blocked */
 }
+
+    .scroll-hint:hover {
+        opacity: 0.85;
+        transition: opacity 0.2s;
+    }
 
 .scroll-arrow {
     width: 20px;
