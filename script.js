@@ -36,3 +36,18 @@ function closeDrawer() {
 if (hamburger) hamburger.addEventListener('click', openDrawer);
 if (drawerClose) drawerClose.addEventListener('click', closeDrawer);
 if (overlay) overlay.addEventListener('click', closeDrawer);
+
+// ── Scroll hint — click to scroll past the hero ──
+const scrollHint = document.querySelector('.scroll-hint');
+if (scrollHint) {
+    scrollHint.style.cursor = 'pointer';
+    scrollHint.addEventListener('click', function () {
+        const hero = document.querySelector('.hero');
+        if (hero) {
+            const nextSection = hero.nextElementSibling;
+            if (nextSection) {
+                nextSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+    });
+}
