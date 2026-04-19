@@ -76,7 +76,6 @@
         </div>
 
         <div class="scroll-hint">
-            Explore
             <div class="scroll-arrow"></div>
         </div>
     </section>
@@ -245,7 +244,7 @@
                 <span>📧</span>
                 <span>miracaledesign2021@gmail.com</span>
             </div>
-            
+
             <a href="contact.php" class="btn-primary" style="justify-content:center; margin-top:0.4rem;">
                 Send a Message
             </a>
