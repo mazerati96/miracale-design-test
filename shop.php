@@ -541,6 +541,9 @@ if ($stripeLoaded) {
     Every piece is handmade and one of a kind. Once it's gone, it's gone —
     so grab your favourite before someone else does.
   </p>
+  <p>
+  Contact the artist for local pickup if you are in the area, or attending a craft fair that we will be at!
+  </p>
 </section>
 
 <!-- SHOP -->
