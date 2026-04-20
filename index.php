@@ -221,12 +221,12 @@
     <section class="testimonial-section reveal">
         <div class="testimonial-content">
             <p class="testimonial-quote">
-                "Miracale Design's handmade art is simply stunning! Each piece reflects true craftsmanship and creativity. I love supporting this small business from Virginia."
+                "I LOVE this artist's work!!! Miracale Design has already made me two different book covers, a logo for my socials, and a mockup video for my book to post on instragram! That's only the journey so far! She's also practically overhauling my trilogy site with almost 40 pieces of art!!! Everything comes in clean, timely, and almost little to no changes at all are required (she catches the changes herself, I hardly need to do anything!). I highly recommend Miracale Design, you won't regret commissioning her or buying her art!"
             </p>
             <div class="testimonial-author">
-                <div class="author-avatar">🌸</div>
+                <div class="author-avatar">📝</div>
                 <div class="author-info">
-                    <div class="author-name">Emily R.</div>
+                    <div class="author-name">Bastian Amaro</div>
                     <div class="author-stars">★★★★★</div>
                 </div>
             </div>
