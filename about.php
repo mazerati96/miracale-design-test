@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png" />
   <title>About — Miracale Design</title>
   <meta name="description" content="Meet the artist behind Miracale Design — handmade art and crafts made with love in Virginia." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
