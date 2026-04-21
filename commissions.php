@@ -14,6 +14,8 @@ if (file_exists($statusFile)) {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png" />
   <title>Commissions — Miracale Design</title>
   <meta name="description" content="Request a custom handmade piece from Miracale Design. Read the commission terms and submit your request." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
