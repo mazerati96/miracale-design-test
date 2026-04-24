@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png" />
     <title>Miracale Design — Handmade Art from Virginia</title>
     <meta name="description" content="Unique handmade art and crafts from Virginia. Clay animals, watercolors, wood art, and custom keychains — all crafted with love by Miracale Design." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -76,7 +78,6 @@
         </div>
 
         <div class="scroll-hint">
-            Explore
             <div class="scroll-arrow"></div>
         </div>
     </section>
@@ -222,12 +223,12 @@
     <section class="testimonial-section reveal">
         <div class="testimonial-content">
             <p class="testimonial-quote">
-                "Miracale Design's handmade art is simply stunning! Each piece reflects true craftsmanship and creativity. I love supporting this small business from Virginia."
+                "I LOVE this artist's work!!! Miracale Design has already made me two different book covers, a logo for my socials, and a mockup video for my book to post on instragram! That's only the journey so far! She's also practically overhauling my trilogy site with almost 40 pieces of art!!! Everything comes in clean, timely, and almost little to no changes at all are required (she catches the changes herself, I hardly need to do anything!). I highly recommend Miracale Design, you won't regret commissioning her or buying her art!"
             </p>
             <div class="testimonial-author">
-                <div class="author-avatar">🌸</div>
+                <div class="author-avatar">📝</div>
                 <div class="author-info">
-                    <div class="author-name">Emily R.</div>
+                    <div class="author-name">Bastian Amaro</div>
                     <div class="author-stars">★★★★★</div>
                 </div>
             </div>
@@ -245,7 +246,7 @@
                 <span>📧</span>
                 <span>miracaledesign2021@gmail.com</span>
             </div>
-            
+
             <a href="contact.php" class="btn-primary" style="justify-content:center; margin-top:0.4rem;">
                 Send a Message
             </a>

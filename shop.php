@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png" />
   <title>Shop — Miracale Design</title>
   <meta name="description" content="Shop handmade art from Miracale Design — clay animals, watercolors, wood art, and custom keychains." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />

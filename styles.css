@@ -19,6 +19,7 @@
 
 html {
     scroll-behavior: smooth;
+    overflow-x: hidden; /* must be on html, not body, to avoid mobile double-scroll bug */
 }
 
 body {
@@ -26,7 +27,6 @@ body {
     color: var(--ink);
     font-family: 'Nunito', sans-serif;
     font-weight: 400;
-    overflow-x: hidden;
 }
 
     /* ── NOISE TEXTURE OVERLAY ── */
@@ -49,8 +49,6 @@ body {
     padding: 7rem clamp(3rem, 8vw, 10rem) 4rem;
     gap: clamp(2rem, 4vw, 5rem);
     position: relative;
-    overflow-x: hidden;
-    overflow-y: visible;
     max-width: 1600px;
     margin-left: auto;
     margin-right: auto;
@@ -161,6 +159,7 @@ body {
 
 .hero-ctas {
     display: flex;
+    flex-wrap: wrap;
     gap: 1rem;
     align-items: center;
 }
