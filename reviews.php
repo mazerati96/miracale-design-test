@@ -204,12 +204,35 @@ $avatars = array('🌟', '🌸', '🎨', '✨', '💫', '🌻', '🎭', '🦋');
     }
     .reviews-featured-row .review-card.featured {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
+      grid-template-columns: 1.4fr 1fr;  /* give more room to the quote */
+      gap: 0;                             /* remove gap — border handles the separation */
       align-items: center;
+    }
+    .reviews-featured-row .review-card.featured > div:first-child {
+      padding-right: 2.5rem;
+    }
+    .reviews-featured-row .review-card.featured > div:last-child {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem 1.5rem 2rem 2.5rem;
+      border-left: 1px solid rgba(255,253,248,0.15);
     }
     .reviews-featured-row .review-card.featured .review-text {
       font-size: 1.4rem;
+    }
+    /* Center the meta info (avatar + name) in the featured card */
+    .reviews-featured-row .review-card.featured .review-meta {
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+      text-align: center;
+    }
+    .reviews-featured-row .review-card.featured .review-author,
+    .reviews-featured-row .review-card.featured .review-product {
+      text-align: center;
     }
     /* Remaining reviews grid */
     .reviews-grid {
@@ -521,6 +544,14 @@ $avatars = array('🌟', '🌸', '🎨', '✨', '💫', '🌻', '🎭', '🦋');
       .reviews-section { padding: 3rem 1.5rem 4rem; }
       .reviews-featured-row .review-card.featured {
         grid-template-columns: 1fr;
+      }
+      .reviews-featured-row .review-card.featured > div:first-child {
+        padding-right: 0;
+      }
+      .reviews-featured-row .review-card.featured > div:last-child {
+        border-left: none;
+        border-top: 1px solid rgba(255,253,248,0.15);
+        padding: 1.5rem 0 0;
       }
       .reviews-grid { grid-template-columns: 1fr; }
       .submit-section { margin: 0 1.5rem 4rem; padding: 2.5rem 1.8rem; }
