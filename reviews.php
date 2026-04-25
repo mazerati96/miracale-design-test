@@ -198,6 +198,20 @@ $avatars = array('🌟', '🌸', '🎨', '✨', '💫', '🌻', '🎭', '🦋');
     .reviews-section {
       padding: 4rem 3rem 5rem;
     }
+    /* Featured review — full width hero row */
+    .reviews-featured-row {
+      margin-bottom: 1.4rem;
+    }
+    .reviews-featured-row .review-card.featured {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      align-items: center;
+    }
+    .reviews-featured-row .review-card.featured .review-text {
+      font-size: 1.4rem;
+    }
+    /* Remaining reviews grid */
     .reviews-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -505,6 +519,9 @@ $avatars = array('🌟', '🌸', '🎨', '✨', '💫', '🌻', '🎭', '🦋');
       .rating-summary { margin: 0 1.5rem 1rem; gap: 1.5rem; }
       .rating-divider { display: none; }
       .reviews-section { padding: 3rem 1.5rem 4rem; }
+      .reviews-featured-row .review-card.featured {
+        grid-template-columns: 1fr;
+      }
       .reviews-grid { grid-template-columns: 1fr; }
       .submit-section { margin: 0 1.5rem 4rem; padding: 2.5rem 1.8rem; }
       .submit-inner { grid-template-columns: 1fr; gap: 2rem; }
@@ -558,28 +575,33 @@ $avatars = array('🌟', '🌸', '🎨', '✨', '💫', '🌻', '🎭', '🦋');
 
 <!-- REVIEWS GRID -->
 <section class="reviews-section reveal">
-  <div class="reviews-grid">
 
-    <?php if ($featured): ?>
-    <!-- Featured review -->
+  <?php if ($featured): ?>
+  <!-- Featured review — full-width hero row -->
+  <div class="reviews-featured-row">
     <div class="review-card featured">
-      <div class="review-stars"><?= str_repeat('★', (int)($featured['stars'] ?? 5)) ?></div>
-      <p class="review-text">"<?= htmlspecialchars($featured['review']) ?>"</p>
-      <div class="review-meta">
-        <div class="review-avatar">🌟</div>
-        <div>
-          <div class="review-author"><?= htmlspecialchars($featured['name']) ?></div>
-          <div class="review-product"><?= !empty($featured['product']) ? htmlspecialchars($featured['product']) : 'Verified Purchase' ?></div>
+      <div>
+        <div class="review-stars"><?= str_repeat('★', (int)($featured['stars'] ?? 5)) ?></div>
+        <p class="review-text">"<?= htmlspecialchars($featured['review']) ?>"</p>
+      </div>
+      <div>
+        <div class="review-meta">
+          <div class="review-avatar">🌟</div>
+          <div>
+            <div class="review-author"><?= htmlspecialchars($featured['name']) ?></div>
+            <div class="review-product"><?= !empty($featured['product']) ? htmlspecialchars($featured['product']) : 'Verified Purchase' ?></div>
+          </div>
         </div>
       </div>
     </div>
-    <?php endif; ?>
+  </div>
+  <?php endif; ?>
 
-    <?php
-    $shown = 0;
-    foreach ($rest as $r):
-      if ($shown >= 2) break; // show max 2 more alongside featured
-      $avatarIcon = $avatars[($r['id'] ?? $shown) % count($avatars)];
+  <?php if (!empty($rest)): ?>
+  <!-- All remaining approved reviews — no limit -->
+  <div class="reviews-grid">
+    <?php foreach ($rest as $i => $r):
+      $avatarIcon = $avatars[($r['id'] ?? $i) % count($avatars)];
     ?>
     <div class="review-card">
       <div class="review-stars"><?= str_repeat('★', (int)($r['stars'] ?? 5)) ?></div>
@@ -592,18 +614,19 @@ $avatars = array('🌟', '🌸', '🎨', '✨', '💫', '🌻', '🎭', '🦋');
         </div>
       </div>
     </div>
-    <?php $shown++; endforeach; ?>
+    <?php endforeach; ?>
 
     <?php if ($total < 3): ?>
-    <!-- Placeholder to encourage more reviews -->
+    <!-- Placeholder — encourage more reviews -->
     <div class="review-card" style="background:var(--parchment); border:1.5px dashed rgba(28,26,23,0.15); box-shadow:none; align-items:center; justify-content:center; text-align:center; gap:0.6rem;">
       <div style="font-size:2.5rem">✍️</div>
       <div style="font-family:'Dancing Script',cursive; font-size:1.2rem; color:var(--ink-soft);">Be the next to share</div>
       <div style="font-size:0.82rem; color:var(--ink-soft); line-height:1.5;">Loved your piece? Leave a review below and help others discover Miracale Design.</div>
     </div>
     <?php endif; ?>
-
   </div>
+  <?php endif; ?>
+
 </section>
 
 <!-- SUBMIT A REVIEW -->
